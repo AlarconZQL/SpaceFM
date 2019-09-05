@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" type="image/png" href="/static/img/nba.png" />
+    <title>NBA</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/default.css">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">Taller de proyecto II</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home
+            <span class="sr-only">(current)</span>
+          </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/gmaron/tp2_example">Link to repo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/gmaron/tp2_template">Link to template</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <img class="myimage" src="/static/img/versus.png"></div>
+
+    <div class="container-fluid">
+        <form method="POST" action="/match">
+            <div class="row">
+                <div class="col-md">
+                    <div class="jumbotron custom">
+                        <div class="text-center">
+                            <h1 class="display-4">Eastern Conference</h1>
+                            <p class="lead">Select a team of the Eastern Conference</p>
+                            <img id="eastern-img" class="logo" src="" />
+                            <div class="input-group mb-3">
+                                <select class="custom-select" name="eastern" id="eastern-select">
+                              {% for x in east %}
+                              <option value={{x.id}} data-image={{x.logo}}>{{x.name}}</option>
+                              {% endfor %}
+                            </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="jumbotron custom">
+                        <div class="text-center">
+                            <h1 class="display-4">Western Conference</h1>
+                            <p class="lead">Select a team of the Western Conference</p>
+                            <img id="western-img" class="logo" src="" />
+                            <div class="input-group mb-3">
+                                <select class="custom-select" name="western" id="western-select">                            
+                            {% for x in west %}
+                            <option value="{{x.id}}" data-image={{x.logo}}>{{x.name}}</option>
+                            {% endfor %}
+                          </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md">
+                    <div class="jumbotron custom">
+                        <div class="text-left">
+                            <p class="lead">Place</p>
+                            <input type="text" class="form-control" name="place" id="place" placeholder="Enter a place for the match" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row start">
+                <button type="submit" class="btn btn-success">START Match</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+    <script src="/static/js/index.js"></script>
+
+</body>
+
+</html>

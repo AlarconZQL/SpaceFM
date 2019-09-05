@@ -1,0 +1,17 @@
+body {
+    background-image: url("../img/background.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;    
+}
+
+.logo{
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.jumbotron.custom{
+    padding: 1rem 1rem;
+    margin-bottom: 1rem;
+    background-color: rgba(233, 236, 239, .3);
+    color: white;
+}

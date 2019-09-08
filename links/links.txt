@@ -1,0 +1,10 @@
+
+
+Info sobre stop and remove containers
+
+https://linuxize.com/post/how-to-remove-docker-images-containers-volumes-and-networks/
+
+
+Info sobre stop and star mysqlservice
+
+https://manage.accuwebhosting.com/knowledgebase/2311/How-to-Stop-and-Start-MySQL-Service-in-Windows-and-Linux-VPS.html

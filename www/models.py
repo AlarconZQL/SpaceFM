@@ -5,6 +5,32 @@ from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, String, BLOB, Date
 from sqlalchemy.ext.declarative import declarative_base
 
+
+
+
+class Song():
+    def __init__(self,id,name):
+        self.id=id
+        self.name=name
+
+
+
+class Music():
+    def __init__(self):
+        pass
+
+    def get_names_songs(self):
+        list = [Song(1,"Etiqueta Negra"),Song(2,"La bestia Pop"),Song(3,"Motor Psico")]
+        return list
+
+    def remove_songs(self,songs):
+        pass
+
+
+
+
+# Parte MYSQL
+
 Base = declarative_base()
 
 class Team(Base):
@@ -15,12 +41,16 @@ class Team(Base):
     id_zone=Column(Integer, ForeignKey('zone.id'))
 
     def serialize(self):
-       """Return object data in easily serializeable format"""
-       return {
+        """Return object data in easily serializeable format"""
+        return {
            'id'  : self.id,
            'name': self.name,
            'logo': base64.b64encode(self.logo).decode("utf-8", "ignore")
-       }
+           }
+
+
+
+
 
 class Match(Base):
     __tablename__ = 'match'

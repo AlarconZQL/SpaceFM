@@ -20,6 +20,14 @@ def index():
     canciones = music.get_names_songs()
     return render_template('index.html',canciones=canciones)
 
+@app.route("/info")
+def info():
+    info = {
+       "dato" : "aaaa"
+    }
+    return jsonify(info)
+
+
 
 
 """

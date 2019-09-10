@@ -29,6 +29,15 @@ def info():
 
 
 
+@app.route("/actualizar")
+def actualizar():
+    estados = {
+       "song" : "Canción para Naufragios",
+       "frecuency" : 95.3,
+       "status" : "emiting"
+    }
+    return jsonify(estados)
+
 
 """
 

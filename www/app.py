@@ -29,6 +29,7 @@ def info():
 
 
 
+
 @app.route("/actualizar")
 def actualizar():
     estados = {
@@ -37,6 +38,16 @@ def actualizar():
        "status" : "emiting"
     }
     return jsonify(estados)
+
+@app.route("/borrar", methods = ["POST"])
+def borrar():
+    print("Borrando...")
+    songsToDelete = request.get_json()
+    app.logger.info(songsToDelete)
+    for id in songsToDelete:
+        music.delete_song(id)
+
+    return jsonify(music.get_names_songs_json())
 
 
 """

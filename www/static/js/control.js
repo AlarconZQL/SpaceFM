@@ -1,5 +1,58 @@
 
 
+
+
+function getSelected() {
+  var selected = [];
+
+  $('#songsList input:checked').each(function() {
+      selected.push($(this).attr('id'));
+  });
+  return JSON.stringify(selected);
+}
+
+function updateList(data) {
+  $('#list').html("");
+  var aux ="";
+  for(i=0;i<data.length;i++) {
+
+    var dato=JSON.parse(data[i]);
+
+
+     aux += "<li class=\"list-group-item\" ><div id=\"songsList\" class=\"custom-control custom-checkbox\" ><input type=\"checkbox\" class=\"custom-control-input\" id=\""+dato.id+"\" >    <label class=\"custom-control-label\" for=\""+dato.id+"\" >" +dato.name+"</label></div></li>";
+
+    //debugger;
+    //console.log(JSON.parse(data[i]).name);
+    //console.log(JSON.parse(data[i]).id);
+    //alert(data[i]['id']);
+  }
+  $('#list').html(aux);
+
+
+
+
+}
+
+
+
+
+$('#deleteBtn').click(function() {
+        $.ajax({
+          url: '/borrar',
+          data: getSelected(),
+          contentType: "application/json",
+          type: "POST",
+          success: function(data) {
+        updateList(data);
+          }
+        });
+
+    });
+
+
+
+
+
 var color=0;
 
 function actualizar(){

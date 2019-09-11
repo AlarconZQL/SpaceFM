@@ -4,14 +4,36 @@ import base64
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, String, BLOB, Date
 from sqlalchemy.ext.declarative import declarative_base
+from json import JSONEncoder
+import json
+import os
+import re
+music_dir = "songs/"
+
+Base = declarative_base()
 
 
-
+class SongEncoder(JSONEncoder):
+    def default(self, object):
+        if isinstance(object, Song):
+            return object.__dict__
+        else:
+            # call base class implementation which takes care of
+            # raising exceptions for unsupported types
+            return json.JSONEncoder.default(self, object)
 
 class Song():
+
     def __init__(self,id,name):
         self.id=id
         self.name=name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+           'id'  : self.id,
+           'name': self.name
+           }
 
 
 
@@ -20,18 +42,39 @@ class Music():
         pass
 
     def get_names_songs(self):
-        list = [Song(1,"Etiqueta Negra"),Song(2,"La bestia Pop"),Song(3,"Motor Psico")]
-        return list
+        file_list = []
+        k = 1
+        for root, folders, files in os.walk(music_dir):
+            folders.sort()
+            files.sort()
+            for filename in files:
+                if re.search(".(aac|mp3|wav|flac|m4a|ogg|pls|m3u)$", filename) != None:
+                    file_list.append(Song(k,filename.replace(".mp3","")))
+                    k = k + 1
+        return file_list
+
+    def get_names_songs_json(self):
+        file_list = []
+        k = 1
+        for root, folders, files in os.walk(music_dir):
+            folders.sort()
+            files.sort()
+            for filename in files:
+                if re.search(".(aac|mp3|wav|flac|m4a|ogg|pls|m3u)$", filename) != None:
+                    file_list.append(SongEncoder().encode(Song(k,filename.replace(".mp3",""))))
+                    k = k + 1
+        return file_list
 
     def remove_songs(self,songs):
         pass
 
+    def delete_song(self,id):
+        pass
 
 
 
 # Parte MYSQL
 
-Base = declarative_base()
 
 class Team(Base):
     __tablename__ = 'team'

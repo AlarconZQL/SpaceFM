@@ -147,7 +147,7 @@
             {% for x in canciones %}
             <li class="list-group-item ">
               <div id="songsList"class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="{{x.id}}">
+                <input type="checkbox" class="custom-control-input" id="{{x.id}}" name="{{x.name}}">
                 <label class="custom-control-label" for="{{x.id}}">{{x.name}}</label>
               </div>
             </li>

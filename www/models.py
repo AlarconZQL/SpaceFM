@@ -61,15 +61,19 @@ class Music():
             files.sort()
             for filename in files:
                 if re.search(".(aac|mp3|wav|flac|m4a|ogg|pls|m3u)$", filename) != None:
-                    file_list.append(SongEncoder().encode(Song(k,filename.replace(".mp3",""))))
+                    file_list.append(SongEncoder().encode(Song(k,filename)))
                     k = k + 1
         return file_list
 
     def remove_songs(self,songs):
         pass
 
-    def delete_song(self,id):
-        pass
+    def delete_song(self,name):
+        if os.path.exists(music_dir+name):
+          os.remove(music_dir+name)
+        else:
+          print("The file does not exist")
+
 
 
 

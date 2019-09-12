@@ -5,8 +5,8 @@
 function getSelected() {
   var selected = [];
 
-  $('#songsList input:checked').each(function() {
-      selected.push($(this).attr('id'));
+  $('#list input:checked').each(function() {
+      selected.push($(this).attr('name'));
   });
   return JSON.stringify(selected);
 }
@@ -19,7 +19,7 @@ function updateList(data) {
     var dato=JSON.parse(data[i]);
 
 
-     aux += "<li class=\"list-group-item\" ><div id=\"songsList\" class=\"custom-control custom-checkbox\" ><input type=\"checkbox\" class=\"custom-control-input\" id=\""+dato.id+"\" >    <label class=\"custom-control-label\" for=\""+dato.id+"\" >" +dato.name+"</label></div></li>";
+     aux += "<li class=\"list-group-item\" ><div id=\"songsList\" class=\"custom-control custom-checkbox\" ><input type=\"checkbox\" class=\"custom-control-input\" id=\""+dato.id+"\"  name=\""+dato.name+"\" >    <label class=\"custom-control-label\" for=\""+dato.id+"\" >" +dato.name+"</label></div></li>";
 
     //debugger;
     //console.log(JSON.parse(data[i]).name);
@@ -81,7 +81,7 @@ function actualizar(){
 }
 
 $(document).ready(function(){
- setInterval(actualizar,2000);
+ //setInterval(actualizar,1000);
 });
 
 

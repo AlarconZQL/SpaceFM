@@ -12,7 +12,6 @@ music_dir = "songs/"
 
 Base = declarative_base()
 
-
 class SongEncoder(JSONEncoder):
     def default(self, object):
         if isinstance(object, Song):
@@ -35,8 +34,6 @@ class Song():
            'name': self.name
            }
 
-
-
 class Music():
     def __init__(self):
         pass
@@ -49,7 +46,7 @@ class Music():
             files.sort()
             for filename in files:
                 if re.search(".(aac|mp3|wav|flac|m4a|ogg|pls|m3u)$", filename) != None:
-                    file_list.append(Song(k,filename.replace(".mp3","")))
+                    file_list.append(Song(k,filename))
                     k = k + 1
         return file_list
 
@@ -74,11 +71,7 @@ class Music():
         else:
           print("The file does not exist")
 
-
-
-
 # Parte MYSQL
-
 
 class Team(Base):
     __tablename__ = 'team'
@@ -94,10 +87,6 @@ class Team(Base):
            'name': self.name,
            'logo': base64.b64encode(self.logo).decode("utf-8", "ignore")
            }
-
-
-
-
 
 class Match(Base):
     __tablename__ = 'match'

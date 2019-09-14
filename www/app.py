@@ -14,6 +14,7 @@ from database import Database
 app = Flask(__name__)
 db = Database()
 music = Music()
+
 # Define the route to enter in the browser
 @app.route('/')
 def index():
@@ -26,9 +27,6 @@ def info():
        "dato" : "aaaa"
     }
     return jsonify(info)
-
-
-
 
 @app.route("/actualizar")
 def actualizar():
@@ -49,12 +47,7 @@ def borrar():
 
     return jsonify(music.get_names_songs_json())
 
-
 """
-
-
-
-
 
 @app.route('/match', methods = ["POST"])
 def start_match():

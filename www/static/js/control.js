@@ -83,10 +83,20 @@ $(document).ready(function(){
     });
   });
 
+  selectAll = true;
+
   $('#selectAllBtn').click(function() {
     $('input[type="checkbox"]').each(function(){
-      $(this).prop("checked", true);
+      $(this).prop("checked", selectAll);
     });
+    
+    if (selectAll) {
+      $('#selectAllBtn').text("Unselect All");
+    } else {
+      $('#selectAllBtn').text("Select All");
+    } 
+    
+    selectAll = !selectAll;
   });
 
   $('#stopBtn').click(function() {

@@ -19,7 +19,7 @@ music = Music()
 @app.route('/')
 def index():
     canciones = music.get_names_songs()
-    return render_template('index.html',canciones=canciones)
+    return render_template('index2.html',canciones=canciones)
 
 @app.route("/info")
 def info():

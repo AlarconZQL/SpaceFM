@@ -1,0 +1,14 @@
+.title {
+  color:white;
+  text-align: center;
+  font-weight: bold;
+}
+
+.songs-panel {
+  height: 400px;
+  overflow-y: scroll;
+}
+
+.has-border {
+  border: 1px white solid;
+}

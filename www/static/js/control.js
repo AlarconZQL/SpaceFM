@@ -137,4 +137,49 @@ $(document).ready(function(){
     });
   });
 
+  function getFiles() {
+    var fileInput = $('#uploadsongs input[type=file]');
+    var file = fileInput[0].files[0];
+
+    if(file!=undefined) {
+      var formData = new FormData();
+      formData.append('file', file, file.name);
+    }
+
+    return formData;
+  }
+  $('#spinner').hide();
+
+  $('#uploadBtn').click(function() {
+    var datos = getFiles();
+    if (datos!=undefined)
+    {
+      $('#uploadBtn').prop('disabled', true);
+      $('#spinner').show();
+      $.ajax({
+        url: '/upload',
+        type: "POST",
+        data: getFiles(),
+        contentType: false,
+        processData: false,
+        success: function(data) {
+        }
+        ,
+        error: function(data) {
+            console.log("NÃO FUNFOU!");
+        },
+        complete: function(data) {
+          $('#uploadBtn').prop('disabled', false);
+          $('#spinner').hide();
+          alert(data);
+
+            //A function to be called when the request finishes
+            // (after success and error callbacks are executed).
+        }
+      });
+    } else {
+      alert('no files selected');
+    }
+  });
+
 });

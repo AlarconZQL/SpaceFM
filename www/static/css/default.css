@@ -2,6 +2,10 @@ body {
     background-image: url("../img/fondo.png");
     background-size: cover;
     background-repeat: no-repeat;
+    height: 100%;
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
 }
 
 .logo{

@@ -21,7 +21,7 @@
     <div class="container-fluid">
 
       <!-- Header -->>
-      <header class="row has">
+      <header class="row">
         <div class="col p-4 has-border">
           <h1 class="title">Welcome to Space FM Radio Station</h1>
         </div>
@@ -48,6 +48,7 @@
         <div class="col p-3 has-border">
           <h3 class="title mb-5">Songs</h3>
           <div>
+            <!--
             <ul id="list" class="list-group songs-panel">
                 {% for x in canciones %}
                 <li class="list-group-item">
@@ -58,6 +59,8 @@
                 </li>
                 {% endfor %}
             </ul>
+            -->
+            <ul id="list" class="list-group songs-panel"></ul>
             <br>
             <div class="d-flex justify-content-center has-border">
               <button id="selectAllBtn" type="button" class="btn btn-light m-2">Select All</button>
@@ -68,7 +71,7 @@
             </div>
             <div id="">
               <form enctype="multipart/form-data" id="uploadsongs" method="post">
-                  <input  type="file" id="file1" name="file1"/>
+                  <input type="file" multiple="" id="file1" name="file1"/>
                   <br />
                   <!-- <input type="submit" value="Subir archivos"/> -->
                 </form>

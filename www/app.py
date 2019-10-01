@@ -4,30 +4,24 @@ from flask import jsonify
 from flask import render_template
 from flask import request
 
-import datetime
-import os
-
-from flask import  flash, redirect, url_for
-from werkzeug.utils import secure_filename
-UPLOAD_FOLDER = 'songs/'
-ALLOWED_EXTENSIONS = set(['mp3','mp4','txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-
-from models import Music
+from utils import RadioManager
 from database import Database
-
+from exceptions import FileFormatNotAllowedError
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = Database()
-music = Music()
-
+radio_manager = RadioManager()
 
 # Define the route to enter in the browser
-@app.route('/')
+"""@app.route('/')
 def index():
     canciones = music.get_names_songs()
-    return render_template('index2.html',canciones=canciones)
+    return render_template('index2.html',canciones=canciones)"""
+
+@app.route('/')
+def index():
+    return render_template('index2.html')
 
 @app.route("/info")
 def info():
@@ -47,86 +41,42 @@ def actualizar():
 
 @app.route("/borrar", methods = ["POST"])
 def borrar():
-    print("Borrando...")
-    songsToDelete = request.get_json()
-    app.logger.info(songsToDelete)
+    songsToDelete = request.get_json()    
     for id in songsToDelete:
-        music.delete_song(id)
-
-    return jsonify(music.get_names_songs_json())
-
-
-
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        app.logger.info("Borrando archivo: " + id)
+        if radio_manager.delete_song(id):
+            app.logger.info("Exito al borrar")
+        else:
+            app.logger.info("No existe el archivo")
+    return jsonify(songs_list = radio_manager.get_names_songs_json())
 
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.files == None:
-        return "error 0"
+        return "No se adjunto ningun archivo"
     try:
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('No file part')
-            return "error 1"
+            return jsonify(error_msg = "No se encuentra el archivo en el requerimiento")
         file = request.files['file']
         # if user does not select file, browser also
         # submit an empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return "error 2"
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return "uooo"
-        else:
-            return "NOOOOO"
-
+        if file.filename == '':            
+            return jsonify(error_msg = "Nombre de archivo vacio")
+        app.logger.info('Guardando archivo: ' + file.filename + '...')
+        if radio_manager.save_song(file):
+            app.logger.info('Archivo guardado con exito')                
+        return jsonify(songs_list = radio_manager.get_names_songs_json())
+    except FileFormatNotAllowedError as e:
+        app.logger.error('Formato de archivo no soportado')
+        return jsonify(error_msg = str(e))
     except Exception as e:
-        return "Algo paso y dio Error"
+        return jsonify(error_msg = str(e))
 
-"""
-
-@app.route('/match', methods = ["POST"])
-def start_match():
-
-    # If there is a process running, return to index()
-    if pro.is_running():
-        return index()
-    data = request.form
-    d_m = {}
-    d_m["team1"] = data["eastern"]
-    d_m["team2"] = data["western"]
-    d_m["place"] = data["place"]
-    if (data["place"] == ""):
-        d_m["place"] = "NEUTRAL"
-    id_match = db.init_match(d_m)
-    pro.start_process(d_m,id_match)
-    return render_template('match.html',
-                           id_team_east=d_m["team1"], id_team_west=d_m["team2"], id_match=id_match)
-
-@app.route('/match/stop/<id_match>', methods = ["GET"])
-def stop_match(id_match):
-    data = pro.stop_process()
-    return jsonify({"status": data})
-
-@app.route('/result/match/<id_match>', methods = ["GET"])
-def get_result_match(id_match):
-    result_match = db.get_result_match(id_match)
-    return jsonify(result_match)
-
-@app.route('/match/<id_match>', methods = ["GET"])
-def get_match(id_match):
-    match = db.get_match(id_match)
-    return jsonify(match)
-
-@app.route('/team/<id_team>', methods = ["GET"])
-def get_team(id_team):
-    team = db.get_team(id_team)
-    return jsonify(team)
-"""
-
+@app.route('/listar', methods=['GET'])
+def listar_canciones():
+    app.logger.info('Listando canciones ...')
+    return jsonify(songs_list = radio_manager.get_names_songs_json())
 
 if __name__ == "__main__":
     # Define HOST and port

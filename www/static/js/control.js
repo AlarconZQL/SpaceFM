@@ -4,12 +4,14 @@ $(document).ready(function(){
   init();
 
   function init() {
-    updateState();
+    getState();
+    getSongs();
     selectAll = true; // true = select all items - false = deselect all items
+    $('#spinner').hide();
     //setInterval(actualizar,1000);
   }
 
-  function updateState() {
+  function getState() {
     var color=0;
     $.ajax({
       url: '/actualizar',
@@ -42,18 +44,17 @@ $(document).ready(function(){
     $('#list input:checked').each(function() {
       selected.push($(this).attr('name'));
     });
-    return JSON.stringify(selected);
+
+    return selected;
   }
 
   function updateList(data) {
-    $('#list').html("");
-    var aux ="";
 
     var newList = $("#list").empty();
 
     for(i=0;i<data.length;i++) {
 
-      var dato=JSON.parse(data[i]);
+      var song = JSON.parse(data[i]);
 
       var itemList = $("<li></li>");
       itemList.addClass("list-group-item");
@@ -63,14 +64,14 @@ $(document).ready(function(){
 
       var input = $("<input></input>");
       input.addClass("custom-control-input");
-      input.attr("id",dato.id);
-      input.attr("name",dato.name);
+      input.attr("id",song.id);
+      input.attr("name",song.name);
       input.attr("type","checkbox");
 
       var label = $("<label></label>");
       label.addClass("custom-control-label");
-      label.attr("for",dato.id);
-      label.text(dato.name);
+      label.attr("for",song.id);
+      label.text(song.name);
 
       songItem.append(input, label);
       itemList.append(songItem);
@@ -102,16 +103,56 @@ $(document).ready(function(){
     });
   }
 
-  $('#deleteBtn').click(function() {
+  function getFiles() {
+    var fileInput = $('#uploadsongs input[type=file]');
+    var file = fileInput[0].files[0];
+
+    if(file!=undefined) {
+      var formData = new FormData();
+      formData.append('file', file, file.name);
+    }
+
+    return formData;
+  }
+
+  function getSongs() {
     $.ajax({
-      url: '/borrar',
-      data: getSelected(),
-      contentType: "application/json",
-      type: "POST",
+      url: '/listar',
+      type: "GET",
       success: function(data) {
-        updateList(data);
+        if (data.songs_list != undefined) {
+          updateList(data.songs_list);
+        } 
+      },
+      error: function(data) {
+        alert("No se pudieron listar las canciones");
       }
     });
+  }
+
+  // Definicion de eventos
+
+  $('#deleteBtn').click(function() {
+    var songs = getSelected();
+    if (songs.length > 0) {
+      $.ajax({
+        url: '/borrar',
+        data: JSON.stringify(songs),
+        contentType: "application/json",
+        type: "POST",
+        success: function(data) {
+          if (data.songs_list != undefined) {
+            updateList(data.songs_list);
+          }          
+        },
+        error: function(data) {
+          alert("No se pudo borrar el archivo");
+        }
+      });
+    } else {
+      alert("No seleccionaste ninguna cancion");
+    }
+    
   });
 
   $('#selectAllBtn').click(function() {
@@ -135,50 +176,38 @@ $(document).ready(function(){
         $('#prueba').text($('#prueba').text() + data['dato']);
       }
     });
-  });
-
-  function getFiles() {
-    var fileInput = $('#uploadsongs input[type=file]');
-    var file = fileInput[0].files[0];
-
-    if(file!=undefined) {
-      var formData = new FormData();
-      formData.append('file', file, file.name);
-    }
-
-    return formData;
-  }
-  $('#spinner').hide();
+  });    
 
   $('#uploadBtn').click(function() {
     var datos = getFiles();
-    if (datos!=undefined)
+    if (datos != undefined)
     {
       $('#uploadBtn').prop('disabled', true);
       $('#spinner').show();
       $.ajax({
         url: '/upload',
         type: "POST",
-        data: getFiles(),
+        data: datos,
         contentType: false,
         processData: false,
         success: function(data) {
-        }
-        ,
+          if (data.songs_list != undefined) {
+            updateList(data.songs_list);
+            $('#file1').val(null); // limpia el input del archivo
+          } else {
+            alert(data.error_msg);
+          }
+        },
         error: function(data) {
-            console.log("NÃO FUNFOU!");
+          alert("No se pudo subir el archivo");
         },
         complete: function(data) {
           $('#uploadBtn').prop('disabled', false);
           $('#spinner').hide();
-          alert(data);
-
-            //A function to be called when the request finishes
-            // (after success and error callbacks are executed).
         }
       });
     } else {
-      alert('no files selected');
+      alert('No seleccionaste ningun archivo');
     }
   });
 

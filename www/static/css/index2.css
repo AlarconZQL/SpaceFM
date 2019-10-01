@@ -12,3 +12,7 @@
 .has-border {
   border: 1px white solid;
 }
+
+input {
+  color: white;
+}

@@ -1,2 +1,4 @@
 www/songs/
-www/__pycache__/*
+www/__pycache__/
+*.pyc
+.vscode/

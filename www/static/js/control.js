@@ -1,4 +1,4 @@
-// Wait till the document is fully loaded
+// Esperar al que documento HTML este completamente cargado
 $(document).ready(function(){
 
   init();
@@ -11,6 +11,7 @@ $(document).ready(function(){
     //setInterval(actualizar,1000);
   }
 
+  // Realiza un requerimiento HTTP al servidor para obtener el estado de la emisora
   function getState() {
     var color=0;
     $.ajax({
@@ -38,6 +39,7 @@ $(document).ready(function(){
     });
   }
 
+  // Obtiene todos los nombres de archivos de audio que se han seleccionado en la lista
   function getSelected() {
     var selected = [];
 
@@ -48,6 +50,7 @@ $(document).ready(function(){
     return selected;
   }
 
+  // Reconstruye la vista de la lista que contiene a los nombres de los archivos de audio
   function updateList(data) {
 
     var newList = $("#list").empty();
@@ -75,34 +78,13 @@ $(document).ready(function(){
 
       songItem.append(input, label);
       itemList.append(songItem);
-      newList.append(itemList);
-
-      //aux += "<li class=\"list-group-item\" ><div id=\"songsList\" class=\"custom-control custom-checkbox\" ><input type=\"checkbox\" class=\"custom-control-input\" id=\""+dato.id+"\"  name=\""+dato.name+"\" >    <label class=\"custom-control-label\" for=\""+dato.id+"\" >" +dato.name+"</label></div></li>";
+      newList.append(itemList);      
 
     }
-    //$('#list').html(aux);
   }
 
-  function actualizar(){
-    var color=0;
-    $.ajax({
-      url: '/actualizar',
-      success: function(data){
-        var texto = "Song: "+data['song']+"<br>"
-        +"Frecuency: "+data['frecuency']+"<br>"
-        +"Status: "+data['status']+"<br>";
-        $('#estados').html(texto);
-        if(color==0) {
-          $('#estados').css("color", "red");
-          color=1;
-        } else {
-          $('#estados').css("color", "blue");
-          color=0;
-        }
-      }
-    });
-  }
-
+  // Obtiene la lista de archivos que se han subido al navegador
+  // Por el momento solo toma el primer elemento de la lista
   function getFiles() {
     var fileInput = $('#uploadsongs input[type=file]');
     var file = fileInput[0].files[0];
@@ -115,6 +97,7 @@ $(document).ready(function(){
     return formData;
   }
 
+  // Realiza un requerimiento HTTP al servidor para obtener la lista de archivos de audio de la emisora
   function getSongs() {
     $.ajax({
       url: '/listar',
@@ -130,7 +113,7 @@ $(document).ready(function(){
     });
   }
 
-  // Definicion de eventos
+  // Definicion de eventos para los botones de la pagina
 
   $('#deleteBtn').click(function() {
     var songs = getSelected();

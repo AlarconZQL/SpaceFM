@@ -1,3 +1,5 @@
+# Todavia no se utiliza, pero pretendemos contar con una conexion a una base de datos en el futuro.
+
 from models import Match
 from models import Result
 from models import Team

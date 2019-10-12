@@ -16,14 +16,12 @@ class SongEncoder(JSONEncoder):
         if isinstance(object, Song):
             return object.__dict__
         else:
-            # call base class implementation which takes care of
-            # raising exceptions for unsupported types
             return JSONEncoder.default(self, object)
 
 class RadioManager():
 
     UPLOAD_FOLDER = 'songs/'
-    ALLOWED_EXTENSIONS = set(['mp3','mp4','txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+    ALLOWED_EXTENSIONS = set(['mp3','wav','aac','flac','m4a','ogg','pls','m3u'])
 
     def __init__(self):
         pass
@@ -52,9 +50,6 @@ class RadioManager():
                     k = k + 1
         return file_list
 
-    def remove_songs(self,songs):
-        pass
-
     def delete_song(self,name):
         if os.path.exists(self.UPLOAD_FOLDER+name):
           os.remove(self.UPLOAD_FOLDER+name)
@@ -62,11 +57,11 @@ class RadioManager():
         else:
           return False
     
-    def allowed_file(self,filename):
+    def __allowed_file(self,filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in self.ALLOWED_EXTENSIONS
     
     def save_song(self,file):        
-        if file and self.allowed_file(file.filename):
+        if file and self.__allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(self.UPLOAD_FOLDER, filename))
             return True

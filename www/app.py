@@ -5,31 +5,17 @@ from flask import render_template
 from flask import request
 
 from utils import RadioManager
-from database import Database
 from exceptions import FileFormatNotAllowedError
 
 app = Flask(__name__)
-
-db = Database()
 radio_manager = RadioManager()
 
-# Define the route to enter in the browser
-"""@app.route('/')
-def index():
-    canciones = music.get_names_songs()
-    return render_template('index2.html',canciones=canciones)"""
-
+# Ruta raiz que carga el contenido principal de la pagina
 @app.route('/')
 def index():
-    return render_template('index2.html')
+    return render_template('index.html')
 
-@app.route("/info")
-def info():
-    info = {
-       "dato" : "aaaa"
-    }
-    return jsonify(info)
-
+# Ruta para consultar el estado de la emisora
 @app.route("/actualizar")
 def actualizar():
     estados = {
@@ -39,6 +25,7 @@ def actualizar():
     }
     return jsonify(estados)
 
+# Ruta para eliminar un conjunto de archivos de audio
 @app.route("/borrar", methods = ["POST"])
 def borrar():
     songsToDelete = request.get_json()    
@@ -50,6 +37,7 @@ def borrar():
             app.logger.info("No existe el archivo")
     return jsonify(songs_list = radio_manager.get_names_songs_json())
 
+# Ruta para subir a la emisora un conjunto de archivos de audio
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.files == None:
@@ -73,6 +61,7 @@ def upload():
     except Exception as e:
         return jsonify(error_msg = str(e))
 
+# Ruta para obtener todos los archivos de audio almacenadas en la emisora
 @app.route('/listar', methods=['GET'])
 def listar_canciones():
     app.logger.info('Listando canciones ...')

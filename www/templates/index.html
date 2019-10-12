@@ -2,177 +2,78 @@
 <html lang="en">
 
   <head>
-      <!-- Required meta tags -->
+      <!-- Meta tags -->
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <!-- <link rel="shortcut icon" type="image/png" href="/static/img/nba.png" />-->
       <title>Space FM</title>
       <!-- Bootstrap CSS -->
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+      <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
       <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
       <link rel="stylesheet" href="/static/css/index.css">
       <link rel="stylesheet" href="/static/css/default.css">
   </head>
 
   <body>
 
-      <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-          <a class="navbar-brand" href="#">Space FM</a>
+    <!-- Main container -->
+    <div class="container-fluid">
 
-          <!--
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav mr-auto">
-                  <li class="nav-item active">
-                      <a class="nav-link" href="#">Home
-              <span class="sr-only">(current)</span>
-            </a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="https://github.com/gmaron/tp2_example">Link to repo</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="https://github.com/gmaron/tp2_template">Link to template</a>
-                  </li>
-              </ul>
-          </div>
-        -->
-
-      </nav>
-
-
-      <!--
-      <img class="myimage" src="/static/img/fondo.jpg"></div>
-
-      <div class="container-fluid">
-          <form method="POST" action="/match">
-              <div class="row">
-                  <div class="col-md">
-                      <div class="jumbotron custom">
-                          <div class="text-center">
-                              <h1 class="display-4">Eastern Conference</h1>
-                              <p class="lead">Select a team of the Eastern Conference</p>
-                              <img id="eastern-img" class="logo" src="" />
-                              <div class="input-group mb-3">
-                                  <select class="custom-select" name="eastern" id="eastern-select">
-                                {% for x in east %}
-                                <option value={{x.id}} data-image={{x.logo}}>{{x.name}}</option>
-                                {% endfor %}
-                              </select>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col-md">
-                      <div class="jumbotron custom">
-                          <div class="text-center">
-                              <h1 class="display-4">Western Conference</h1>
-                              <p class="lead">Select a team of the Western Conference</p>
-                              <img id="western-img" class="logo" src="" />
-                              <div class="input-group mb-3">
-                                  <select class="custom-select" name="western" id="western-select">
-                              {% for x in west %}
-                              <option value="{{x.id}}" data-image={{x.logo}}>{{x.name}}</option>
-                              {% endfor %}
-                            </select>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-              <div class="row">
-                  <div class="col-md">
-                      <div class="jumbotron custom">
-                          <div class="text-left">
-                              <p class="lead">Place</p>
-                              <input type="text" class="form-control" name="place" id="place" placeholder="Enter a place for the match" />
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-              <div class="row start">
-                  <button type="submit" class="btn btn-success">START Match</button>
-              </div>
-          </form>
-      </div>
-
-    -->
-
-
-    <br>
-    <br>
-    <h1 class="title">Welcome to Space FM Radio Station</h1>
-    <br>
-    <br>
-
-    <div class="grid-container">
-
-      <!-- STATUS -->
-
-      <div class="grid-item">
-        <h3 class="title">Status</h3>
-        <br>
-        <p class="title">Emiting ...</p>
-        <p class="title">Song: Motor Psico</p>
-        <p class="title" name="prueba" id="prueba"> </p>
-        <div class="title" name="estados" id="estados"> </div>
-
-        <br>
-
-        <div class="grid-container2">
-          <div class="grid-item">
-            <button name="stop" id="stopBtn" type="button" class="btn-status btn btn-default">Stop</button>
-          </div>
-          <div class="grid-item">
-            <button type="button" class="btn-status btn btn-default">Start</button>
-          </div>
+      <!-- Header -->>
+      <header class="row">
+        <div class="col p-4 has-border">
+          <h1 class="title">Welcome to Space FM Radio Station</h1>
         </div>
-      </div>
+      </header>
 
-      <!-- LISTA DE CANCIONES -->
+      <!-- Main content -->
+      <main class="row">
 
-      <div class="grid-item">
-
-        <h3 class="title">Songs</h3>
-        <div class="container-songs">
-          <ul id="list" class="list-group">
-              {% for x in canciones %}
-              <li class="list-group-item">
-                <div id="songItem" class="custom-control custom-checkbox">
-                  <input type="checkbox" class="custom-control-input" id="{{x.id}}" name="{{x.name}}">
-                  <label class="custom-control-label" for="{{x.id}}">{{x.name}}</label>
-                </div>
-              </li>
-              {% endfor %}
-          </ul>
-
+        <!-- Status Panel -->
+        <div class="col p-3 has-border">
+          <h3 class="title mb-5">Status</h3>
           <br>
-
-          <div class="grid-container2">
-            <div class="grid-item">
-              <button id="selectAllBtn" type="button" class="btn-status btn btn-default">Select All</button>
-            </div>
-            <div class="grid-item">
-              <button id="deleteBtn" type="button" class="btn-status btn btn-danger">Delete</button>
-            </div>
+          <p id="frequencyInfo" class="title"></p>
+          <p id="songInfo" class="title"></p>
+          <div class="d-flex justify-content-center align-content-center has-border">
+            <p id="statusInfo" class="title"></p>
+            <button id="powerBtn" type="button" class="btn" name="powerBtn">
+              <i class="fas fa-power-off fa-lg"></i>
+            </button>
           </div>
         </div>
-      </div>
 
+        <!-- Songs Panel -->
+        <div class="col p-3 has-border">
+          <h3 class="title mb-5">Songs</h3>
+          <div>
+            <ul id="list" class="list-group songs-panel"></ul>
+            <br>
+            <div class="d-flex justify-content-center has-border">
+              <button id="selectAllBtn" type="button" class="btn btn-light m-2">Select All</button>
+              <button id="deleteBtn" type="button" class="btn btn-danger m-2">Delete</button>
+              <button id="uploadBtn" type="button" class="btn btn-primary m-2">Upload
+                <span id="spinner" class="spinner-border spinner-border-sm"></span>
+              </button>
+            </div>
+            <div id="">
+              <form enctype="multipart/form-data" id="uploadsongs" method="post">
+                  <input type="file" multiple="" id="file1" name="file1"/>
+                  <br />
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
     </div>
-
-    <footer style="width:1500px"></footer>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
     <script src="/static/js/index.js"></script>
     <script src="/static/js/control.js"></script>
 

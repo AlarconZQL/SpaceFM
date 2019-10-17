@@ -1,36 +1,37 @@
 version: '2'
 
 services:
-  db:
-    container_name: mysqldb
-    image: mysql:5.7
-    restart: always
-    env_file: ".env"
-    environment:
-        MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-        MYSQL_DATABASE: $MYSQL_DATABASE
-        MYSQL_USER: $MYSQL_USER
-        MYSQL_PASSWORD: $MYSQL_PASSWORD
-    ports:
-      - 3306:3306
-    volumes:
-      - "./database/:/docker-entrypoint-initdb.d"
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    restart: always
-    ports:
-      - 8080:80
-    links:
-      - db:db
+
+  #db:
+    #container_name: mysqldb
+    #image: mysql:5.7
+    #restart: always
+    #env_file: ".env"
+    #environment:
+        #MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+        #MYSQL_DATABASE: $MYSQL_DATABASE
+        #MYSQL_USER: $MYSQL_USER
+        #MYSQL_PASSWORD: $MYSQL_PASSWORD
+    #ports:
+      #- 3306:3306
+    #volumes:
+      #- "./database/:/docker-entrypoint-initdb.d"
+  #phpmyadmin:
+    #image: phpmyadmin/phpmyadmin
+    #container_name: phpmyadmin
+    #restart: always
+    #ports:
+      #- 8080:80
+    #links:
+      #- db:db
   www:
     container_name: pythonserver
     build: ./www
     restart: always
-    links:
-      - db
-    depends_on:
-      - db
+    #links:
+      #- db
+    #depends_on:
+      #- db
     volumes:
       - "./www/:/www/"
     ports:

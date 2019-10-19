@@ -18,14 +18,14 @@ finally:
 
 fm_process = None
 on_off = ["off", "on"]
-config_location = "/pirateradio/pirateradio.conf"
+config_location = "/home/pi/SpaceFM/pirateradio/pirateradio.conf"
 
-frequency = 87.9
+frequency = 107.7
 shuffle = False
-repeat_all = False
+repeat_all = True
 merge_audio_in = False
 play_stereo = True
-music_dir = "/pirateradio"
+music_dir = "songs/"
 
 music_pipe_r,music_pipe_w = os.pipe()
 microphone_pipe_r,microphone_pipe_w = os.pipe()
@@ -34,6 +34,8 @@ def main():
 	daemonize()
 	setup()
 	files = build_file_list()
+	print(files)
+	
 	if repeat_all == True:
 		while(True):
 			play_songs(files)
@@ -45,10 +47,11 @@ def main():
 
 def build_file_list():
 	file_list = []
-	for root, folders, files in os.walk(music_dir):
+	for root, folders, files in os.walk(music_dir):	
 		folders.sort()
 		files.sort()
 		for filename in files:
+			print(filename)
 			if re.search(".(aac|mp3|wav|flac|m4a|ogg|pls|m3u)$", filename) != None: 
 				file_list.append(os.path.join(root, filename))
 	return file_list
@@ -65,6 +68,8 @@ def play_songs(file_list):
 		random.shuffle(file_list)
 	with open(os.devnull, "w") as dev_null:
 		for filename in file_list:
+			print("sssssssssssss")
+			print(filename)
 			print("Playing ",filename)
 			if re.search(".pls$", filename) != None:
 				streamurl = parse_pls(filename, 1)
@@ -77,7 +82,8 @@ def play_songs(file_list):
 					print("streaming radio from " + streamurl)
 					subprocess.call(["ffmpeg","-i",streamurl,"-f","s16le","-acodec","pcm_s16le","-ac", "2" if play_stereo else "1" ,"-ar","44100","-"],stdout=music_pipe_w, stderr=dev_null)
 			else:
-				subprocess.call(["ffmpeg","-i",filename,"-f","s16le","-acodec","pcm_s16le","-ac", "2" if play_stereo else "1" ,"-ar","44100","-"],stdout=music_pipe_w, stderr=dev_null)
+				print(filename)
+				subprocess.call(["ffmpeg","-i","songs/01_Heroe_del_whisky.mp3","-f","s16le","-acodec","pcm_s16le","-ac", "2" if play_stereo else "1" ,"-ar","44100","-"],stdout=music_pipe_w, stderr=dev_null)
 
 
 
@@ -157,7 +163,7 @@ def setup():
 def run_pifm(use_audio_in=False):
 	global fm_process
 	with open(os.devnull, "w") as dev_null:
-		fm_process = subprocess.Popen(["/root/pifm","-",str(frequency),"44100", "stereo" if play_stereo else "mono"], stdin=music_pipe_r, stdout=dev_null)
+		fm_process = subprocess.Popen(["/home/pi/SpaceFM/pirateradio/pifm","-",str(frequency),"44100", "stereo" if play_stereo else "mono"], stdin=music_pipe_r, stdout=dev_null)
 
 		#if use_audio_in == False:
 		#else:

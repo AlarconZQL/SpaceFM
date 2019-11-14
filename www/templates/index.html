@@ -15,7 +15,7 @@
 
       <!-- CSS propios -->
       <link rel="stylesheet" href="../static/css/index.css">
-      <link rel="stylesheet" href="../static/css/default.css">
+
   </head>
 
   <body>
@@ -34,7 +34,7 @@
       <main class="row">
 
         <!-- Status Panel -->
-        <div class="col p-3 has-border">
+        <div class="col-sm p-3 has-border">
           <h3 class="title mb-5">Status</h3>
           <br>
           <p id="frequencyInfo" class="title"></p>
@@ -48,22 +48,24 @@
         </div>
 
         <!-- Songs Panel -->
-        <div class="col p-3 has-border">
+        <div class="col-sm p-3 has-border">
           <h3 class="title mb-5">Songs</h3>
           <div>
-            <ul id="list" class="list-group songs-panel"></ul>
-            <br>
-            <div class="d-flex justify-content-center has-border">
+            <ul id="list" class="list-group songs-panel mb-3"></ul>
+
+            <div class="d-flex justify-content-center has-border mb-3">
               <button id="selectAllBtn" type="button" class="btn btn-light m-2">Select All</button>
               <button id="deleteBtn" type="button" class="btn btn-danger m-2">Delete</button>
               <button id="uploadBtn" type="button" class="btn btn-primary m-2">Upload
                 <span id="spinner" class="spinner-border spinner-border-sm"></span>
               </button>
             </div>
-            <form enctype="multipart/form-data" id="uploadsongs" method="delete">
-                <input type="file" multiple="" id="file1" name="file1"/>
-                <br />
-            </form>
+
+            <div class="d-flex justify-content-center has-border mb-3">
+              <form enctype="multipart/form-data" id="uploadsongs" method="post">
+                  <input type="file" multiple="" id="file1" name="file1"/>
+              </form>
+            </div>
 
           </div>
         </div>

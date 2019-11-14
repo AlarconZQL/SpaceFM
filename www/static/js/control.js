@@ -8,36 +8,6 @@ $(document).ready(function(){
     getSongs();
     selectAll = true; // true = select all items - false = deselect all items
     $('#spinner').hide();
-    //setInterval(actualizar,1000);
-  }
-
-  // Realiza un requerimiento HTTP al servidor para obtener el estado de la emisora
-  function getState() {
-    var color=0;
-    $.ajax({
-      url: '/actualizar',
-      type: "GET",
-      success: function(data) {
-
-        var songInfo = "Listening to: " + data["song"];
-        var freqInfo = "FM Frequency: " + data["frequency"] + " MHz";
-        var status =  data["status"];
-        var powerBtnColor = "";
-        var statusInfo = "";
-        if (status === "emiting") {
-          powerBtnColor = "red";
-          statusInfo = "We are online!";
-        } else {
-          powerBtnColor = "green";
-          statusInfo = "We are offline...";
-        }
-
-        $("#songInfo").text(songInfo);
-        $("#frequencyInfo").text(freqInfo);
-        $("#statusInfo").text(statusInfo);
-        $("#powerBtn").css("background-color", powerBtnColor);
-      }
-    });
   }
 
   // Obtiene todos los nombres de archivos de audio que se han seleccionado en la lista
@@ -98,6 +68,37 @@ $(document).ready(function(){
     return formData;
   }
 
+  // Definicion de peticiones AJAX
+
+  // Realiza un requerimiento HTTP al servidor para obtener el estado de la emisora
+  function getState() {
+    var color=0;
+    $.ajax({
+      url: '/actualizar',
+      type: "GET",
+      success: function(data) {
+
+        var songInfo = "Listening to: " + data["song"];
+        var freqInfo = "FM Frequency: " + data["frequency"] + " MHz";
+        var status =  data["status"];
+        var powerBtnColor = "";
+        var statusInfo = "";
+        if (status === "emiting") {
+          powerBtnColor = "red";
+          statusInfo = "We are online!";
+        } else {
+          powerBtnColor = "green";
+          statusInfo = "We are offline...";
+        }
+
+        $("#songInfo").text(songInfo);
+        $("#frequencyInfo").text(freqInfo);
+        $("#statusInfo").text(statusInfo);
+        $("#powerBtn").css("background-color", powerBtnColor);
+      }
+    });
+  }
+
   // Realiza un requerimiento HTTP al servidor para obtener la lista de archivos de audio de la emisora
   function getSongs() {
     $.ajax({
@@ -142,7 +143,7 @@ $(document).ready(function(){
       url: '/borrar',
       type: "DELETE",
       contentType: "application/json",
-      data: JSON.stringify(songs),     
+      data: JSON.stringify(songs),
       success: function(data) {
         if (data.songs_list != undefined) {
           updateList(data.songs_list);

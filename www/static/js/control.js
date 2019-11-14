@@ -140,9 +140,9 @@ $(document).ready(function(){
   function deleteSongs(songs) {
     $.ajax({
       url: '/borrar',
-      data: JSON.stringify(songs),
-      contentType: "application/json",
       type: "DELETE",
+      contentType: "application/json",
+      data: JSON.stringify(songs),     
       success: function(data) {
         if (data.songs_list != undefined) {
           updateList(data.songs_list);

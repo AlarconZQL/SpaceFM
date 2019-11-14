@@ -26,7 +26,7 @@ def actualizar():
     return jsonify(estados)
 
 # Ruta para eliminar un conjunto de archivos de audio
-@app.route("/borrar", methods = ["DELETE"])
+@app.route("/borrar", methods = ['DELETE'])
 def borrar():
     songsToDelete = request.get_json()
     for id in songsToDelete:

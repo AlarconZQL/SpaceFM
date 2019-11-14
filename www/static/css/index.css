@@ -1,3 +1,17 @@
+body {
+    background-image: url("../img/fondo.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100%;
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
+}
+
+input {
+  color: white;
+}
+
 .title {
   color:white;
   text-align: center;
@@ -11,8 +25,4 @@
 
 .has-border {
   border: 1px white solid;
-}
-
-input {
-  color: white;
 }

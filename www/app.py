@@ -26,9 +26,9 @@ def actualizar():
     return jsonify(estados)
 
 # Ruta para eliminar un conjunto de archivos de audio
-@app.route("/borrar", methods = ["POST"])
+@app.route("/borrar", methods = ["DELETE"])
 def borrar():
-    songsToDelete = request.get_json()    
+    songsToDelete = request.get_json()
     for id in songsToDelete:
         app.logger.info("Borrando archivo: " + id)
         if radio_manager.delete_song(id):
@@ -49,11 +49,11 @@ def upload():
         file = request.files['file']
         # if user does not select file, browser also
         # submit an empty part without filename
-        if file.filename == '':            
+        if file.filename == '':
             return jsonify(error_msg = "Nombre de archivo vacio")
         app.logger.info('Guardando archivo: ' + file.filename + '...')
         if radio_manager.save_song(file):
-            app.logger.info('Archivo guardado con exito')                
+            app.logger.info('Archivo guardado con exito')
         return jsonify(songs_list = radio_manager.get_names_songs_json())
     except FileFormatNotAllowedError as e:
         app.logger.error('Formato de archivo no soportado')

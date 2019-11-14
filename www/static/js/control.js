@@ -132,10 +132,24 @@ $(document).ready(function(){
       },
       error: function(data) {
         alert("No se pudo subir el archivo");
+      }
+    });
+  }
+
+  // Realiza un requerimiento HTTP al servidor para eliminar un conjunto de archivos de audio en la emisora
+  function deleteSongs(songs) {
+    $.ajax({
+      url: '/borrar',
+      data: JSON.stringify(songs),
+      contentType: "application/json",
+      type: "DELETE",
+      success: function(data) {
+        if (data.songs_list != undefined) {
+          updateList(data.songs_list);
+        }
       },
-      complete: function(data) {
-        $('#uploadBtn').prop('disabled', false);
-        $('#spinner').hide();
+      error: function(data) {
+        alert("No se pudo borrar el archivo");
       }
     });
   }
@@ -145,20 +159,7 @@ $(document).ready(function(){
   $('#deleteBtn').click(function() {
     var songs = getSelected();
     if (songs.length > 0) {
-      $.ajax({
-        url: '/borrar',
-        data: JSON.stringify(songs),
-        contentType: "application/json",
-        type: "POST",
-        success: function(data) {
-          if (data.songs_list != undefined) {
-            updateList(data.songs_list);
-          }
-        },
-        error: function(data) {
-          alert("No se pudo borrar el archivo");
-        }
-      });
+      deleteSongs(songs);
     } else {
       alert("No seleccionaste ninguna cancion");
     }
@@ -195,6 +196,8 @@ $(document).ready(function(){
       $('#uploadBtn').prop('disabled', true);
       $('#spinner').show();
       uploadSong(datos);
+      $('#uploadBtn').prop('disabled', false);
+      $('#spinner').hide();
     } else {
       alert('No seleccionaste ningun archivo');
     }

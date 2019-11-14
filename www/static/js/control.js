@@ -16,10 +16,11 @@ $(document).ready(function(){
     var color=0;
     $.ajax({
       url: '/actualizar',
+      type: "GET",
       success: function(data) {
 
         var songInfo = "Listening to: " + data["song"];
-        var freqInfo = "FM Frequency: " + data["frecuency"] + " MHz";
+        var freqInfo = "FM Frequency: " + data["frequency"] + " MHz";
         var status =  data["status"];
         var powerBtnColor = "";
         var statusInfo = "";
@@ -78,7 +79,7 @@ $(document).ready(function(){
 
       songItem.append(input, label);
       itemList.append(songItem);
-      newList.append(itemList);      
+      newList.append(itemList);
 
     }
   }
@@ -105,10 +106,36 @@ $(document).ready(function(){
       success: function(data) {
         if (data.songs_list != undefined) {
           updateList(data.songs_list);
-        } 
+        }
       },
       error: function(data) {
         alert("No se pudieron listar las canciones");
+      }
+    });
+  }
+
+  // Realiza un requerimiento HTTP al servidor para transferir un archivo de audio a la emisora
+  function uploadSong(datos) {
+    $.ajax({
+      url: '/upload',
+      type: "POST",
+      data: datos,
+      contentType: false,
+      processData: false,
+      success: function(data) {
+        if (data.songs_list != undefined) {
+          updateList(data.songs_list);
+          $('#file1').val(null); // limpia el input del archivo
+        } else {
+          alert(data.error_msg);
+        }
+      },
+      error: function(data) {
+        alert("No se pudo subir el archivo");
+      },
+      complete: function(data) {
+        $('#uploadBtn').prop('disabled', false);
+        $('#spinner').hide();
       }
     });
   }
@@ -126,7 +153,7 @@ $(document).ready(function(){
         success: function(data) {
           if (data.songs_list != undefined) {
             updateList(data.songs_list);
-          }          
+          }
         },
         error: function(data) {
           alert("No se pudo borrar el archivo");
@@ -135,7 +162,7 @@ $(document).ready(function(){
     } else {
       alert("No seleccionaste ninguna cancion");
     }
-    
+
   });
 
   $('#selectAllBtn').click(function() {
@@ -159,7 +186,7 @@ $(document).ready(function(){
         $('#prueba').text($('#prueba').text() + data['dato']);
       }
     });
-  });    
+  });
 
   $('#uploadBtn').click(function() {
     var datos = getFiles();
@@ -167,28 +194,7 @@ $(document).ready(function(){
     {
       $('#uploadBtn').prop('disabled', true);
       $('#spinner').show();
-      $.ajax({
-        url: '/upload',
-        type: "POST",
-        data: datos,
-        contentType: false,
-        processData: false,
-        success: function(data) {
-          if (data.songs_list != undefined) {
-            updateList(data.songs_list);
-            $('#file1').val(null); // limpia el input del archivo
-          } else {
-            alert(data.error_msg);
-          }
-        },
-        error: function(data) {
-          alert("No se pudo subir el archivo");
-        },
-        complete: function(data) {
-          $('#uploadBtn').prop('disabled', false);
-          $('#spinner').hide();
-        }
-      });
+      uploadSong(datos);
     } else {
       alert('No seleccionaste ningun archivo');
     }

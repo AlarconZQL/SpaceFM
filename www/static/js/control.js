@@ -24,11 +24,19 @@ $(document).ready(function(){
         var powerBtnColor = "";
         var statusInfo = "";
         if (status === "emiting") {
-          powerBtnColor = "red";
+          //powerBtnColor = "red";
+          $("#powerBtnStart").css("display", "none");
+          $("#powerBtnStop").css("display", "block");
+          $("#powerBtnNext").css("display", "block");
+
           statusInfo = "We are online!";
         } else {
-          powerBtnColor = "green";
+          //powerBtnColor = "green";
           statusInfo = "We are offline...";
+          $("#powerBtnStart").css("display", "block");
+          $("#powerBtnStop").css("display", "none");
+          $("#powerBtnNext").css("display", "none");
+
         }
 
         $("#songInfo").text(songInfo);
@@ -78,7 +86,7 @@ $(document).ready(function(){
 
       songItem.append(input, label);
       itemList.append(songItem);
-      newList.append(itemList);      
+      newList.append(itemList);
 
     }
   }
@@ -105,7 +113,7 @@ $(document).ready(function(){
       success: function(data) {
         if (data.songs_list != undefined) {
           updateList(data.songs_list);
-        } 
+        }
       },
       error: function(data) {
         alert("No se pudieron listar las canciones");
@@ -113,7 +121,78 @@ $(document).ready(function(){
     });
   }
 
+
+
+
+
+
   // Definicion de eventos para los botones de la pagina
+
+
+
+  $('#powerBtnStart').click(function() {
+      $.ajax({
+        url: '/start',
+        type: "POST",
+        success: function(data) {
+          alert("Radio iniciada!")
+          $("#powerBtnStart").css("display", "none");
+          $("#powerBtnStop").css("display", "block");
+          $("#powerBtnNext").css("display", "block");
+
+          $("#statusInfo").text("We are online!");
+        },
+        error: function(data) {
+          debugger;
+          alert("No se pudo iniciar la radio");
+        }
+      });
+
+
+  });
+
+
+
+    $('#powerBtnStop').click(function() {
+        $.ajax({
+          url: '/stop',
+          type: "POST",
+          success: function(data) {
+
+            $("#powerBtnStart").css("display", "block");
+            $("#powerBtnStop").css("display", "none");
+            $("#powerBtnNext").css("display", "none");
+            $("#statusInfo").text("We are offline ... !");
+          },
+          error: function(data) {
+            alert("No se pudo cerrar la radio");
+          }
+        });
+
+
+    });
+
+
+    $('#powerBtnNext').click(function() {
+        $.ajax({
+          url: '/next',
+          type: "POST",
+          success: function(data) {
+
+          },
+          error: function(data) {
+            alert("No se pudo cerrar la radio");
+          }
+        });
+
+
+    });
+
+
+
+
+
+
 
   $('#deleteBtn').click(function() {
     var songs = getSelected();
@@ -126,7 +205,7 @@ $(document).ready(function(){
         success: function(data) {
           if (data.songs_list != undefined) {
             updateList(data.songs_list);
-          }          
+          }
         },
         error: function(data) {
           alert("No se pudo borrar el archivo");
@@ -135,7 +214,7 @@ $(document).ready(function(){
     } else {
       alert("No seleccionaste ninguna cancion");
     }
-    
+
   });
 
   $('#selectAllBtn').click(function() {
@@ -159,7 +238,7 @@ $(document).ready(function(){
         $('#prueba').text($('#prueba').text() + data['dato']);
       }
     });
-  });    
+  });
 
   $('#uploadBtn').click(function() {
     var datos = getFiles();

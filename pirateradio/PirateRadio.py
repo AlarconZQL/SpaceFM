@@ -2,6 +2,9 @@
 # Pirate Radio
 # Author: Wynter Woods (Make Magazine)
 
+#hello raspssss
+
+
 try:	# the following tests for a python3.x module
 	import configparser
 except: # if the module isn't found, we're likely running python2.x and will just trick it into working
@@ -35,7 +38,7 @@ def main():
 	setup()
 	files = build_file_list()
 	print(files)
-	
+
 	if repeat_all == True:
 		while(True):
 			play_songs(files)
@@ -47,12 +50,12 @@ def main():
 
 def build_file_list():
 	file_list = []
-	for root, folders, files in os.walk(music_dir):	
+	for root, folders, files in os.walk(music_dir):
 		folders.sort()
 		files.sort()
 		for filename in files:
 			print(filename)
-			if re.search(".(aac|mp3|wav|flac|m4a|ogg|pls|m3u)$", filename) != None: 
+			if re.search(".(aac|mp3|wav|flac|m4a|ogg|pls|m3u)$", filename) != None:
 				file_list.append(os.path.join(root, filename))
 	return file_list
 
@@ -63,7 +66,7 @@ def play_songs(file_list):
 	print("Shuffle is " + on_off[shuffle])
 	print("Repeat All is " + on_off[repeat_all])
 	# print("Stereo playback is " + on_off[play_stereo])
-	
+
 	if shuffle == True:
 		random.shuffle(file_list)
 	with open(os.devnull, "w") as dev_null:
@@ -83,8 +86,9 @@ def play_songs(file_list):
 					subprocess.call(["ffmpeg","-i",streamurl,"-f","s16le","-acodec","pcm_s16le","-ac", "2" if play_stereo else "1" ,"-ar","44100","-"],stdout=music_pipe_w, stderr=dev_null)
 			else:
 				print(filename)
-				subprocess.call(["ffmpeg","-i","songs/01_Heroe_del_whisky.mp3","-f","s16le","-acodec","pcm_s16le","-ac", "2" if play_stereo else "1" ,"-ar","44100","-"],stdout=music_pipe_w, stderr=dev_null)
-
+				print('Inicio')
+				subprocess.call(["ffmpeg","-i","songs/Heroe.mp3","-f","s16le","-acodec","pcm_s16le","-ac", "2" if play_stereo else "1" ,"-ar","44100","-"],stdout=music_pipe_w, stderr=dev_null)
+				print('Fin')
 
 
 def read_config():
@@ -96,7 +100,7 @@ def read_config():
 	try:
 		config = configparser.ConfigParser()
 		config.read(config_location)
-		
+
 	except:
 		print("Error reading from config file.")
 	else:
@@ -122,9 +126,9 @@ def parse_pls(src, titleindex):
 				# URI found, it's saved in the second match group
 				# output the URI to the destination file
 					return match.group( 1 )
-		
+
 	return None
-		
+
 def parse_m3u(src, titleindex):
 	# create a list of strings, one per line in the source file
 	lines = []
@@ -140,10 +144,10 @@ def parse_m3u(src, titleindex):
 					return line
 				else:
 					searchindex += 1
-		
+
 	return None
-			
-	
+
+
 
 def daemonize():
 	fpid=os.fork()
@@ -184,4 +188,3 @@ def open_microphone():
 
 
 main()
-

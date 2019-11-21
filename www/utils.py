@@ -98,7 +98,7 @@ class RadioProcess(object):
             self.listening()
 
     def start(self):
-        if(self.reproduciendo==0):
+        if(self.reproduciendo==0 and len(self.songs) > 0):
             cmd = "/home/pi/SpaceFM/www/fm_transmitter -f 87.5 /home/pi/SpaceFM/www/songs/"+self.songs[self.indice]
             pwd = "raspberry"
             p=subprocess.Popen('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)

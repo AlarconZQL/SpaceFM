@@ -8,6 +8,46 @@ $(document).ready(function(){
     getSongs();
     selectAll = true; // true = select all items - false = deselect all items
     $('#spinner').hide();
+<<<<<<< HEAD
+=======
+    //setInterval(actualizar,1000);
+  }
+
+  // Realiza un requerimiento HTTP al servidor para obtener el estado de la emisora
+  function getState() {
+    var color=0;
+    $.ajax({
+      url: '/actualizar',
+      success: function(data) {
+
+        var songInfo = "Listening to: " + data["song"];
+        var freqInfo = "FM Frequency: " + data["frecuency"] + " MHz";
+        var status =  data["status"];
+        var powerBtnColor = "";
+        var statusInfo = "";
+        if (status === "emiting") {
+          //powerBtnColor = "red";
+          $("#powerBtnStart").css("display", "none");
+          $("#powerBtnStop").css("display", "block");
+          $("#powerBtnNext").css("display", "block");
+
+          statusInfo = "We are online!";
+        } else {
+          //powerBtnColor = "green";
+          statusInfo = "We are offline...";
+          $("#powerBtnStart").css("display", "block");
+          $("#powerBtnStop").css("display", "none");
+          $("#powerBtnNext").css("display", "none");
+
+        }
+
+        $("#songInfo").text(songInfo);
+        $("#frequencyInfo").text(freqInfo);
+        $("#statusInfo").text(statusInfo);
+        $("#powerBtn").css("background-color", powerBtnColor);
+      }
+    });
+>>>>>>> raspberryedition
   }
 
   // Obtiene todos los nombres de archivos de audio que se han seleccionado en la lista
@@ -115,6 +155,7 @@ $(document).ready(function(){
     });
   }
 
+<<<<<<< HEAD
   // Realiza un requerimiento HTTP al servidor para transferir un archivo de audio a la emisora
   function uploadSong(datos) {
     $.ajax({
@@ -154,13 +195,102 @@ $(document).ready(function(){
       }
     });
   }
+=======
+
+
+
+
+>>>>>>> raspberryedition
 
   // Definicion de eventos para los botones de la pagina
+
+
+
+  $('#powerBtnStart').click(function() {
+      $.ajax({
+        url: '/start',
+        type: "POST",
+        success: function(data) {
+          alert("Radio iniciada!")
+          $("#powerBtnStart").css("display", "none");
+          $("#powerBtnStop").css("display", "block");
+          $("#powerBtnNext").css("display", "block");
+
+          $("#statusInfo").text("We are online!");
+        },
+        error: function(data) {
+          debugger;
+          alert("No se pudo iniciar la radio");
+        }
+      });
+
+
+  });
+
+
+
+    $('#powerBtnStop').click(function() {
+        $.ajax({
+          url: '/stop',
+          type: "POST",
+          success: function(data) {
+
+            $("#powerBtnStart").css("display", "block");
+            $("#powerBtnStop").css("display", "none");
+            $("#powerBtnNext").css("display", "none");
+            $("#statusInfo").text("We are offline ... !");
+          },
+          error: function(data) {
+            alert("No se pudo cerrar la radio");
+          }
+        });
+
+
+    });
+
+
+    $('#powerBtnNext').click(function() {
+        $.ajax({
+          url: '/next',
+          type: "POST",
+          success: function(data) {
+
+          },
+          error: function(data) {
+            alert("No se pudo cerrar la radio");
+          }
+        });
+
+
+    });
+
+
+
+
+
+
 
   $('#deleteBtn').click(function() {
     var songs = getSelected();
     if (songs.length > 0) {
+<<<<<<< HEAD
       deleteSongs(songs);
+=======
+      $.ajax({
+        url: '/borrar',
+        data: JSON.stringify(songs),
+        contentType: "application/json",
+        type: "POST",
+        success: function(data) {
+          if (data.songs_list != undefined) {
+            updateList(data.songs_list);
+          }
+        },
+        error: function(data) {
+          alert("No se pudo borrar el archivo");
+        }
+      });
+>>>>>>> raspberryedition
     } else {
       alert("No seleccionaste ninguna cancion");
     }

@@ -79,19 +79,10 @@ def next():
 
     return "parado"
 
-
-
-
-
 # Ruta para consultar el estado de la emisora
 @app.route("/actualizar")
 def actualizar():
-    estados = {
-       "song" : "Canción para Naufragios",
-       "frecuency" : 95.3,
-       "status" : radioProcess.getState()
-    }
-    return jsonify(estados)
+    return jsonify(radioProcess.getState())
 
 # Ruta para eliminar un conjunto de archivos de audio
 @app.route("/borrar", methods = ['DELETE'])
@@ -103,6 +94,7 @@ def borrar():
             app.logger.info("Exito al borrar")
         else:
             app.logger.info("No existe el archivo")
+    radioProcess.update()
     return jsonify(songs_list = radio_manager.get_names_songs_json())
 
 # Ruta para subir a la emisora un conjunto de archivos de audio
@@ -120,8 +112,19 @@ def upload():
         if file.filename == '':
             return jsonify(error_msg = "Nombre de archivo vacio")
         app.logger.info('Guardando archivo: ' + file.filename + '...')
+        file.filename = file.filename.replace(' ','-')
         if radio_manager.save_song(file):
+            nombre = file.filename
+            nombre2 = nombre.replace('mp3','wav')
+            cmd = 'sox songs/' + nombre + ' -r 22050 -c 1 -b 16 -t wav songs/' + nombre2
+            print('Ejecutando: ' + cmd)
+            pwd = 'raspberry'
+            p = subprocess.call('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)
+            cmd = 'rm songs/' + nombre
+            pwd = 'raspberry'
+            p = subprocess.call('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)
             app.logger.info('Archivo guardado con exito')
+            radioProcess.update()
         return jsonify(songs_list = radio_manager.get_names_songs_json())
     except FileFormatNotAllowedError as e:
         app.logger.error('Formato de archivo no soportado')

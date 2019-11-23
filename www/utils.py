@@ -1,5 +1,3 @@
-#HOLA FEDE
-
 import os # operative system module
 
 import re # regular expressions module
@@ -81,25 +79,23 @@ import subprocess
 
 class RadioProcess(object):
     process = None
+    songs = []
+    indice = None
+    reproduciendo = None
+    currentSong = ""
+    FREQUENCY = 87.5
 
     def __init__(self):
-        self.songs = []
-        for root, folders, files in os.walk("songs/"):
-            folders.sort()
-            files.sort()
-            for filename in files:
-                if re.search(".(wav)$", filename) != None:
-                    self.songs.append(filename)
-
-        self.indice=0
         self.reproduciendo=0
+        self.update()
         fpid=os.fork()
         if fpid==0:
             self.listening()
 
     def start(self):
         if(self.reproduciendo==0 and len(self.songs) > 0):
-            cmd = "/home/pi/SpaceFM/www/fm_transmitter -f 87.5 /home/pi/SpaceFM/www/songs/"+self.songs[self.indice]
+            self.currentSong = self.songs[self.indice]
+            cmd = "/home/pi/SpaceFM/www/fm_transmitter -f 87.5 /home/pi/SpaceFM/www/songs/" + self.currentSong
             pwd = "raspberry"
             p=subprocess.Popen('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)
             self.reproduciendo=1
@@ -107,7 +103,6 @@ class RadioProcess(object):
                 self.indice=0
             else:
                 self.indice=self.indice+1
-
 
     def stop(self):
         if(self.reproduciendo==1):
@@ -124,6 +119,7 @@ class RadioProcess(object):
                 except Exception as e:
                     pass
             self.reproduciendo=0
+            self.currentSong = ""
 
     def next(self):
         if(self.reproduciendo==1):
@@ -146,10 +142,20 @@ class RadioProcess(object):
                     pass
             time.sleep(1)
 
-
+    def update(self):
+        self.songs = []
+        for root, folders, files in os.walk("songs/"):
+            folders.sort()
+            files.sort()
+            for filename in files:
+                if re.search(".(wav)$", filename) != None:
+                    self.songs.append(filename)
+        self.indice=0
 
     def getState(self):
-        if(self.process != None):
-            return "emiting"
-        else:
-            return "offline"
+        estados = {
+           "song" : self.currentSong,
+           "frequency" : self.FREQUENCY,
+           "status" : self.reproduciendo
+        }
+        return estados

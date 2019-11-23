@@ -8,6 +8,7 @@ $(document).ready(function(){
     getSongs();
     selectAll = true; // true = select all items - false = deselect all items
     $('#spinner').hide();
+    setInterval(getState,1000);
   }
 
   // Obtiene todos los nombres de archivos de audio que se han seleccionado en la lista
@@ -83,18 +84,21 @@ $(document).ready(function(){
         var status =  data["status"];
         var powerBtnColor = "";
         var statusInfo = "";
-        if (status === "emiting") {
-          powerBtnColor = "red";
+        if (status === 1) {
+          $('#powerBtnStart').css('display', 'none');
+          $('#powerBtnStop').css('display', 'block');
+          $('#powerBtnNext').css('display', 'block');
           statusInfo = "We are online!";
         } else {
-          powerBtnColor = "green";
+          $('#powerBtnStart').css('display', 'block');
+          $('#powerBtnStop').css('display', 'none');
+          $('#powerBtnNext').css('display', 'none');
           statusInfo = "We are offline...";
         }
 
         $("#songInfo").text(songInfo);
         $("#frequencyInfo").text(freqInfo);
         $("#statusInfo").text(statusInfo);
-        $("#powerBtn").css("background-color", powerBtnColor);
       }
     });
   }

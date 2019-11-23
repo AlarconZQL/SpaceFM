@@ -9,6 +9,7 @@ $(document).ready(function(){
     selectAll = true; // true = select all items - false = deselect all items
     $('#spinner').hide();
     setInterval(getState,1000);
+    setInterval(getSongs,10000);
   }
 
   // Obtiene todos los nombres de archivos de audio que se han seleccionado en la lista
@@ -88,11 +89,13 @@ $(document).ready(function(){
           $('#powerBtnStart').css('display', 'none');
           $('#powerBtnStop').css('display', 'block');
           $('#powerBtnNext').css('display', 'block');
+          $('#powerBtnPrev').css('display', 'block');
           statusInfo = "We are online!";
         } else {
           $('#powerBtnStart').css('display', 'block');
           $('#powerBtnStop').css('display', 'none');
           $('#powerBtnNext').css('display', 'none');
+          $('#powerBtnPrev').css('display', 'none');
           statusInfo = "We are offline...";
         }
 
@@ -121,6 +124,8 @@ $(document).ready(function(){
 
   // Realiza un requerimiento HTTP al servidor para transferir un archivo de audio a la emisora
   function uploadSong(datos) {
+    $('#spinner').show();
+    $('#uploadBtn').prop('disabled', true);
     $.ajax({
       url: '/upload',
       type: "POST",
@@ -137,6 +142,10 @@ $(document).ready(function(){
       },
       error: function(data) {
         alert("No se pudo subir el archivo");
+      },
+      complete: function(data) {
+        $('#spinner').hide();
+        $('#uploadBtn').prop('disabled', false);
       }
     });
   }
@@ -161,8 +170,6 @@ $(document).ready(function(){
 
   // Definicion de eventos para los botones de la pagina
 
-
-
   $('#powerBtnStart').click(function() {
       $.ajax({
         url: '/start',
@@ -172,60 +179,58 @@ $(document).ready(function(){
           $("#powerBtnStart").css("display", "none");
           $("#powerBtnStop").css("display", "block");
           $("#powerBtnNext").css("display", "block");
-
+          $("#powerBtnPrev").css("display", "block");
           $("#statusInfo").text("We are online!");
         },
         error: function(data) {
-          debugger;
           alert("No se pudo iniciar la radio");
         }
       });
-
-
   });
 
+  $('#powerBtnStop').click(function() {
+      $.ajax({
+        url: '/stop',
+        type: "POST",
+        success: function(data) {
 
+          $("#powerBtnStart").css("display", "block");
+          $("#powerBtnStop").css("display", "none");
+          $("#powerBtnNext").css("display", "none");
+          $("#powerBtnPrev").css("display", "none");
+          $("#statusInfo").text("We are offline ... !");
+        },
+        error: function(data) {
+          alert("No se pudo cerrar la radio");
+        }
+      });
+  });
 
-    $('#powerBtnStop').click(function() {
-        $.ajax({
-          url: '/stop',
-          type: "POST",
-          success: function(data) {
+  $('#powerBtnNext').click(function() {
+      $.ajax({
+        url: '/next',
+        type: "POST",
+        success: function(data) {
 
-            $("#powerBtnStart").css("display", "block");
-            $("#powerBtnStop").css("display", "none");
-            $("#powerBtnNext").css("display", "none");
-            $("#statusInfo").text("We are offline ... !");
-          },
-          error: function(data) {
-            alert("No se pudo cerrar la radio");
-          }
-        });
+        },
+        error: function(data) {
+          alert("No se pudo cerrar la radio");
+        }
+      });
+  });
 
+  $('#powerBtnPrev').click(function() {
+      $.ajax({
+        url: '/prev',
+        type: "POST",
+        success: function(data) {
 
-    });
-
-
-    $('#powerBtnNext').click(function() {
-        $.ajax({
-          url: '/next',
-          type: "POST",
-          success: function(data) {
-
-          },
-          error: function(data) {
-            alert("No se pudo cerrar la radio");
-          }
-        });
-
-
-    });
-
-
-
-
-
-
+        },
+        error: function(data) {
+          alert("No se pudo cerrar la radio");
+        }
+      });
+  });
 
   $('#deleteBtn').click(function() {
     var songs = getSelected();
@@ -264,11 +269,7 @@ $(document).ready(function(){
     var datos = getFiles();
     if (datos != undefined)
     {
-      $('#uploadBtn').prop('disabled', true);
-      $('#spinner').show();
       uploadSong(datos);
-      $('#uploadBtn').prop('disabled', false);
-      $('#spinner').hide();
     } else {
       alert('No seleccionaste ningun archivo');
     }

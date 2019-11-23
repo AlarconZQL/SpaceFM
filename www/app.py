@@ -25,58 +25,27 @@ import os
 # Ruta para iniciar la emisora
 @app.route("/start", methods = ["POST"])
 def start():
+    print("Iniciando proceso")
     app.logger.info("Iniciando proceso...")
-    #app.logger.info(pro.start_process())
-
-    """
-    cmd = "/home/pi/SpaceFM/www/fm_transmitter -f 87.5 /home/pi/SpaceFM/www/heroe.wav"
-    pwd = "raspberry"
-    #preexec_fn=os.setsid
-    #fpid = os.fork()
-    #fpid=0
-    #command = './home/pi/SpaceFM/www/fm_transmitter -f 87.5 /home/pi/SpaceFM/www/heroe.wav'.split()
-    #subprocess.Popen(command, shell=True)
-
-    command = 'python3 anda.py'.split()
-    subprocess.Popen(command)
-        cmd = "/home/pi/SpaceFM/www/fm_transmitter -f 87.5 /home/pi/SpaceFM/www/heroe.wav"
-        pwd = "raspberry"
-
-        app.logger.info("A")
-        p=subprocess.Popen('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)
-
-    """
-    """
-    f = open("comunicar.txt", "w")
-    f.write("Iniciar")
-    f.close()
-    """
     radioProcess.start()
-
     return "sarasa"
 
 # Ruta para detener la emisora
 @app.route("/stop", methods = ["POST"])
 def stop():
-    """
-    f = open("comunicar.txt", "w")
-    f.write("Detener")
-    f.close()
-    """
     radioProcess.stop()
-
     return "parado"
 
-# Ruta para detener la emisora
+# Ruta para pasar al siguiente tema en la emisora
 @app.route("/next", methods = ["POST"])
 def next():
-    """
-    f = open("comunicar.txt", "w")
-    f.write("Siguiente")
-    f.close()
-    """
     radioProcess.next()
+    return "parado"
 
+# Ruta para pasar al anterior tema en la emisora
+@app.route("/prev", methods = ["POST"])
+def prev():
+    radioProcess.prev()
     return "parado"
 
 # Ruta para consultar el estado de la emisora
@@ -112,18 +81,7 @@ def upload():
         if file.filename == '':
             return jsonify(error_msg = "Nombre de archivo vacio")
         app.logger.info('Guardando archivo: ' + file.filename + '...')
-        file.filename = file.filename.replace(' ','-')
         if radio_manager.save_song(file):
-            nombre = file.filename
-            nombre2 = nombre.replace('mp3','wav')
-            cmd = 'sox songs/' + nombre + ' -r 22050 -c 1 -b 16 -t wav songs/' + nombre2
-            print('Ejecutando: ' + cmd)
-            pwd = 'raspberry'
-            p = subprocess.call('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)
-            cmd = 'rm songs/' + nombre
-            pwd = 'raspberry'
-            p = subprocess.call('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)
-            app.logger.info('Archivo guardado con exito')
             radioProcess.update()
         return jsonify(songs_list = radio_manager.get_names_songs_json())
     except FileFormatNotAllowedError as e:

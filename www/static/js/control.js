@@ -8,8 +8,8 @@ $(document).ready(function(){
     getSongs();
     selectAll = true; // true = select all items - false = deselect all items
     $('#spinner').hide();
-    setInterval(getState,1000);
-    setInterval(getSongs,10000);
+    //setInterval(getState,1000);
+    //setInterval(getSongs,10000);
   }
 
   // Obtiene todos los nombres de archivos de audio que se han seleccionado en la lista
@@ -60,13 +60,14 @@ $(document).ready(function(){
   // Por el momento solo toma el primer elemento de la lista
   function getFiles() {
     var fileInput = $('#uploadsongs input[type=file]');
-    var file = fileInput[0].files[0];
-
-    if(file!=undefined) {
-      var formData = new FormData();
-      formData.append('file', file, file.name);
+    var file;
+    var formData = new FormData();
+    for (i=0; i<fileInput[0].files.length; i++) {
+      file = fileInput[0].files[i];
+      if(file!=undefined) {
+        formData.append('file'+i, file, file.name);
+      }
     }
-
     return formData;
   }
 
@@ -137,7 +138,7 @@ $(document).ready(function(){
           updateList(data.songs_list);
           $('#file1').val(null); // limpia el input del archivo
         } else {
-          alert(data.error_msg);
+          alert(data);
         }
       },
       error: function(data) {

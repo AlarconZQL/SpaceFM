@@ -67,8 +67,8 @@ def borrar():
     return jsonify(songs_list = radio_manager.get_names_songs_json())
 
 # Ruta para subir a la emisora un conjunto de archivos de audio
-@app.route('/upload', methods=['POST'])
-def upload():
+@app.route('/upload2', methods=['POST'])
+def upload2():
     if request.files == None:
         return "No se adjunto ningun archivo"
     try:
@@ -89,6 +89,35 @@ def upload():
         return jsonify(error_msg = str(e))
     except Exception as e:
         return jsonify(error_msg = str(e))
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    if request.files == None:
+        return "No se adjunto ningun archivo"
+    cadena = ""
+    for x in request.files:
+        try:
+            file = request.files[x]
+            print('ENTRE AL TRY' + file.filename)
+            # check if the post request has the file part
+            if x not in request.files:
+                cadena = cadena + "No se encuentra el archivo " + x + " en el requerimiento\n"
+            # if user does not select file, browser also
+            print('IF')
+            # submit an empty part without filename
+            if file.filename == '':
+                cadena = cadena + "Nombre de archivo vacio" + file.filename + "\n"
+            print('GUARDANDO')
+            radio_manager.save_song(file)
+            print('FINALIZO')
+            #return jsonify(songs_list = radio_manager.get_names_songs_json())
+        except FileFormatNotAllowedError as e:
+            cadena = cadena + 'Formato de archivo' + file.filename +' no soportado\n'
+        except Exception as e:
+            cadena = cadena + 'Archivo' + x + ' \n'
+    radioProcess.update()
+    print (cadena)
+    return cadena
 
 # Ruta para obtener todos los archivos de audio almacenadas en la emisora
 @app.route('/listar', methods=['GET'])

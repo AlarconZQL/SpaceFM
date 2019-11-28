@@ -97,6 +97,7 @@ class ReproductorRadio(object):
         self.thread.start()
 
     def rutina_salir(self, signum, frame):
+        self.detener_cancion()
         self.fin_hilo = True
         sys.exit(0)
 

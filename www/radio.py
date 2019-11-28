@@ -22,7 +22,7 @@ class GestorArchivos():
     def listar_canciones(self):
         file_list = []
         k = 1
-        for root, folders, files in os.walk(self.DIRECTORIO_ARCHIVOS):
+        for root, folders, files in os.walk(GestorArchivos.DIRECTORIO_ARCHIVOS):
             folders.sort()
             files.sort()
             for filename in files:
@@ -34,7 +34,7 @@ class GestorArchivos():
     def listar_canciones_json(self):
         file_list = []
         k = 1
-        for root, folders, files in os.walk(self.DIRECTORIO_ARCHIVOS):
+        for root, folders, files in os.walk(GestorArchivos.DIRECTORIO_ARCHIVOS):
             folders.sort()
             files.sort()
             for filename in files:
@@ -44,8 +44,8 @@ class GestorArchivos():
         return file_list
 
     def borrar_cancion(self,name):
-        if os.path.exists(self.DIRECTORIO_ARCHIVOS+name):
-          os.remove(self.DIRECTORIO_ARCHIVOS+name)
+        if os.path.exists(GestorArchivos.DIRECTORIO_ARCHIVOS+name):
+          os.remove(GestorArchivos.DIRECTORIO_ARCHIVOS+name)
           return True
         else:
           return False
@@ -54,11 +54,11 @@ class GestorArchivos():
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in self.EXTENSIONES_SOPORTADAS
 
     def guardar_cancion(self,file):
-        file.filename = file.filename.replace(' ','')
+        file.filename = file.filename.replace(' ','-')
         if file and self.__archivo_soportado(file.filename):
             filename = secure_filename(file.filename)
             print('Guardando archivo ' + filename)
-            file.save(os.path.join(self.DIRECTORIO_ARCHIVOS, filename))
+            file.save(os.path.join(GestorArchivos.DIRECTORIO_ARCHIVOS, filename))
             if filename.rsplit('.', 1)[1].lower() != 'wav':
                 self.__convertir_a_wav(filename)
             return True
@@ -68,14 +68,14 @@ class GestorArchivos():
     def __convertir_a_wav(self,filename):
         print('Convirtiendo ' + filename + ' a wav...')
         nombre_wav = filename.replace('mp3','wav')
-        cmd = 'sox ' + DIRECTORIO_ARCHIVOS + filename + ' -r 22050 -c 1 -b 16 -t wav ' + DIRECTORIO_ARCHIVOS + nombre_wav
+        cmd = 'sox ' + GestorArchivos.DIRECTORIO_ARCHIVOS + filename + ' -r 22050 -c 1 -b 16 -t wav ' + GestorArchivos.DIRECTORIO_ARCHIVOS + nombre_wav
         pwd = 'raspberry'
         # Crear un nuevo archivo .wav
         p = subprocess.call('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)
-        cmd = 'rm ' + DIRECTORIO_ARCHIVOS + filename
+        cmd = 'rm ' + GestorArchivos.DIRECTORIO_ARCHIVOS + filename
         # Borrar el archivo original
         p = subprocess.call('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)
-        print('Archivo  ' + nombre_wav ' guardado con exito!')
+        print('Archivo  ' + nombre_wav + ' guardado con exito!')
 
 class ReproductorRadio(object):
     process = None
@@ -104,7 +104,7 @@ class ReproductorRadio(object):
         if(self.reproduciendo==0 and len(self.songs) > 0):
             print('Iniciando reproduccion')
             self.currentSong = self.songs[self.indice]
-            cmd = "/home/pi/SpaceFM/www/fm_transmitter -f 87.5 /home/pi/SpaceFM/www/" + DIRECTORIO_ARCHIVOS + self.currentSong
+            cmd = "/home/pi/SpaceFM/www/fm_transmitter -f 87.5 /home/pi/SpaceFM/www/" + GestorArchivos.DIRECTORIO_ARCHIVOS + self.currentSong
             pwd = "raspberry"
             p=subprocess.Popen('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)
             self.reproduciendo=1
@@ -149,7 +149,7 @@ class ReproductorRadio(object):
 
     def actualizar_canciones(self):
         self.songs = []
-        for root, folders, files in os.walk(DIRECTORIO_ARCHIVOS):
+        for root, folders, files in os.walk(GestorArchivos.DIRECTORIO_ARCHIVOS):
             folders.sort()
             files.sort()
             for filename in files:

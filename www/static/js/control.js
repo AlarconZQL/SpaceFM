@@ -60,11 +60,13 @@ $(document).ready(function(){
   function getFiles() {
     var fileInput = $('#uploadsongs input[type=file]');
     var file;
-    var formData = new FormData();
-    for (i=0; i<fileInput[0].files.length; i++) {
-      file = fileInput[0].files[i];
-      if(file!=undefined) {
-        formData.append('file'+i, file, file.name);
+    if(fileInput[0].files.length != 0) {
+      var formData = new FormData();
+      for (i=0; i<fileInput[0].files.length; i++) {
+        file = fileInput[0].files[i];
+        if(file!=undefined) {
+          formData.append('file'+i, file, file.name);
+        }
       }
     }
     return formData;
@@ -133,10 +135,8 @@ $(document).ready(function(){
       contentType: false,
       processData: false,
       success: function(data) {
-        if (data.songs_list != undefined) {
-          updateList(data.songs_list);
-          $('#file1').val(null); // limpia el input del archivo
-        }
+        updateList(data.songs_list);
+        $('#file1').val(null); // limpia el input del archivo        
       },
       error: function(data) {
         alert("No se pudo subir el archivo");

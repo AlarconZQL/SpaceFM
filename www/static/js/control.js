@@ -8,14 +8,15 @@ $(document).ready(function(){
     getSongs();
     selectAll = true; // true = select all items - false = deselect all items
     $('#spinner').hide();
-    //setInterval(getState,1000);
-    //setInterval(getSongs,10000);
+    tiempoRefrescoEstadoEmisora = 1;
+    tiempoRefrescoListaCanciones = 10;
+    setInterval(getState,tiempoRefrescoEstadoEmisora*1000);
+    setInterval(getSongs,tiempoRefrescoListaCanciones*1000);
   }
 
   // Obtiene todos los nombres de archivos de audio que se han seleccionado en la lista
   function getSelected() {
     var selected = [];
-
     $('#list input:checked').each(function() {
       selected.push($(this).attr('name'));
     });
@@ -25,7 +26,6 @@ $(document).ready(function(){
 
   // Reconstruye la vista de la lista que contiene a los nombres de los archivos de audio
   function updateList(data) {
-
     var newList = $("#list").empty();
 
     for(i=0;i<data.length;i++) {
@@ -52,7 +52,6 @@ $(document).ready(function(){
       songItem.append(input, label);
       itemList.append(songItem);
       newList.append(itemList);
-
     }
   }
 
@@ -77,7 +76,7 @@ $(document).ready(function(){
   function getState() {
     var color=0;
     $.ajax({
-      url: '/actualizar',
+      url: '/update',
       type: "GET",
       success: function(data) {
 
@@ -110,7 +109,7 @@ $(document).ready(function(){
   // Realiza un requerimiento HTTP al servidor para obtener la lista de archivos de audio de la emisora
   function getSongs() {
     $.ajax({
-      url: '/listar',
+      url: '/songs',
       type: "GET",
       success: function(data) {
         if (data.songs_list != undefined) {
@@ -137,8 +136,6 @@ $(document).ready(function(){
         if (data.songs_list != undefined) {
           updateList(data.songs_list);
           $('#file1').val(null); // limpia el input del archivo
-        } else {
-          alert(data);
         }
       },
       error: function(data) {
@@ -154,7 +151,7 @@ $(document).ready(function(){
   // Realiza un requerimiento HTTP al servidor para eliminar un conjunto de archivos de audio en la emisora
   function deleteSongs(songs) {
     $.ajax({
-      url: '/borrar',
+      url: '/delete',
       type: "DELETE",
       contentType: "application/json",
       data: JSON.stringify(songs),
@@ -173,7 +170,7 @@ $(document).ready(function(){
 
   $('#powerBtnStart').click(function() {
       $.ajax({
-        url: '/start',
+        url: '/play',
         type: "POST",
         success: function(data) {
           alert("Radio iniciada!")

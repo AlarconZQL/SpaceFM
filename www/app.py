@@ -1,129 +1,92 @@
-# Imports
 from flask import Flask
 from flask import jsonify
 from flask import render_template
 from flask import request
 
-from utils import RadioManager
-from utils import RadioProcess
+from radio import GestorArchivos
+from radio import ReproductorRadio
 
 from exceptions import FileFormatNotAllowedError
 
 app = Flask(__name__)
-radio_manager = RadioManager()
-radioProcess = RadioProcess()
+gestor_archivos = GestorArchivos()
+reproductor_radio = ReproductorRadio()
 
 # Ruta raiz que carga el contenido principal de la pagina
 @app.route('/')
 def index():
     return render_template('index.html')
 
-import subprocess
-import os
+# Ruta para reproducir una cancion
+@app.route("/play", methods = ["POST"])
+def play():
+    reproductor_radio.reproducir_cancion()
+    return "200"
 
-
-# Ruta para iniciar la emisora
-@app.route("/start", methods = ["POST"])
-def start():
-    print("Iniciando proceso")
-    app.logger.info("Iniciando proceso...")
-    radioProcess.start()
-    return "sarasa"
-
-# Ruta para detener la emisora
+# Ruta para detener la cancion actual
 @app.route("/stop", methods = ["POST"])
 def stop():
-    radioProcess.stop()
-    return "parado"
+    reproductor_radio.detener_cancion()
+    return "200"
 
 # Ruta para pasar al siguiente tema en la emisora
 @app.route("/next", methods = ["POST"])
 def next():
-    radioProcess.next()
-    return "parado"
+    reproductor_radio.siguiente_cancion()
+    return "200"
 
 # Ruta para pasar al anterior tema en la emisora
 @app.route("/prev", methods = ["POST"])
 def prev():
-    radioProcess.prev()
-    return "parado"
+    reproductor_radio.anterior_cancion()
+    return "200"
 
 # Ruta para consultar el estado de la emisora
-@app.route("/actualizar")
-def actualizar():
-    return jsonify(radioProcess.getState())
+@app.route("/update")
+def update():
+    return jsonify(reproductor_radio.estado_emisora())
 
 # Ruta para eliminar un conjunto de archivos de audio
-@app.route("/borrar", methods = ['DELETE'])
-def borrar():
-    songsToDelete = request.get_json()
-    for id in songsToDelete:
-        app.logger.info("Borrando archivo: " + id)
-        if radio_manager.delete_song(id):
-            app.logger.info("Exito al borrar")
+@app.route("/delete", methods = ['DELETE'])
+def delete():
+    songs_to_delete = request.get_json()
+    for id in songs_to_delete:
+        print("Borrando archivo con id: " + id)
+        if gestor_archivos.borrar_cancion(id):
+            print("Exito al borrar")
         else:
-            app.logger.info("No existe el archivo")
-    radioProcess.update()
-    return jsonify(songs_list = radio_manager.get_names_songs_json())
+            print("No existe el archivo")
+    reproductor_radio.actualizar_canciones()
+    return jsonify(songs_list = gestor_archivos.listar_canciones_json())
 
 # Ruta para subir a la emisora un conjunto de archivos de audio
-@app.route('/upload2', methods=['POST'])
-def upload2():
-    if request.files == None:
-        return "No se adjunto ningun archivo"
-    try:
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            return jsonify(error_msg = "No se encuentra el archivo en el requerimiento")
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        if file.filename == '':
-            return jsonify(error_msg = "Nombre de archivo vacio")
-        app.logger.info('Guardando archivo: ' + file.filename + '...')
-        if radio_manager.save_song(file):
-            radioProcess.update()
-        return jsonify(songs_list = radio_manager.get_names_songs_json())
-    except FileFormatNotAllowedError as e:
-        app.logger.error('Formato de archivo no soportado')
-        return jsonify(error_msg = str(e))
-    except Exception as e:
-        return jsonify(error_msg = str(e))
-
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.files == None:
         return "No se adjunto ningun archivo"
-    cadena = ""
-    for x in request.files:
+    msj_error = ""
+    for requerimiento in request.files:
         try:
-            file = request.files[x]
-            print('ENTRE AL TRY' + file.filename)
-            # check if the post request has the file part
-            if x not in request.files:
-                cadena = cadena + "No se encuentra el archivo " + x + " en el requerimiento\n"
-            # if user does not select file, browser also
-            print('IF')
-            # submit an empty part without filename
-            if file.filename == '':
-                cadena = cadena + "Nombre de archivo vacio" + file.filename + "\n"
-            print('GUARDANDO')
-            radio_manager.save_song(file)
-            print('FINALIZO')
-            #return jsonify(songs_list = radio_manager.get_names_songs_json())
+            archivo = request.files[requerimiento]
+            # chequeamos si se encuentra este archivo dentro del requerimiento
+            if requerimiento not in request.files:
+                msj_error = msj_error + "No se encuentra el archivo " + requerimiento + " en el requerimiento\n"
+            # chequeamos si el nombre del archivo esta vacio
+            if archivo.filename == '':
+                msj_error = msj_error + "Nombre de archivo vacio" + archivo.filename + "\n"
+            gestor_archivos.guardar_cancion(archivo)
+            #return jsonify(songs_list = gestor_archivos.listar_canciones_json())
         except FileFormatNotAllowedError as e:
-            cadena = cadena + 'Formato de archivo' + file.filename +' no soportado\n'
+            msj_error = msj_error + 'Formato de archivo ' + archivo.filename +' no soportado\n'
         except Exception as e:
-            cadena = cadena + 'Archivo' + x + ' \n'
-    radioProcess.update()
-    print (cadena)
-    return cadena
+            msj_error = msj_error + 'Archivo ' + requerimiento + ' no pudo ser guardado \n'
+    reproductor_radio.actualizar_canciones()
+    return jsonify(songs_list = gestor_archivos.listar_canciones_json())
 
 # Ruta para obtener todos los archivos de audio almacenadas en la emisora
-@app.route('/listar', methods=['GET'])
-def listar_canciones():
-    app.logger.info('Listando canciones ...')
-    return jsonify(songs_list = radio_manager.get_names_songs_json())
+@app.route('/songs', methods=['GET'])
+def get_songs():
+    return jsonify(songs_list = gestor_archivos.listar_canciones_json())
 
 if __name__ == "__main__":
     # Define HOST and port

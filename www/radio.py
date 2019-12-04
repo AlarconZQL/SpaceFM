@@ -17,19 +17,7 @@ class GestorArchivos():
     EXTENSIONES_SOPORTADAS = set(['mp3','wav'])
 
     def __init__(self):
-        pass
-
-    def listar_canciones(self):
-        file_list = []
-        k = 1
-        for root, folders, files in os.walk(GestorArchivos.DIRECTORIO_ARCHIVOS):
-            folders.sort()
-            files.sort()
-            for filename in files:
-                if re.search(".(wav)$", filename) != None:
-                    file_list.append(Song(k,filename))
-                    k = k + 1
-        return file_list
+        pass    
 
     def listar_canciones_json(self):
         file_list = []
@@ -48,10 +36,7 @@ class GestorArchivos():
           os.remove(GestorArchivos.DIRECTORIO_ARCHIVOS+name)
           return True
         else:
-          return False
-
-    def __archivo_soportado(self,filename):
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in self.EXTENSIONES_SOPORTADAS
+          return False    
 
     def guardar_cancion(self,file):
         file.filename = file.filename.replace(' ','-')
@@ -64,6 +49,9 @@ class GestorArchivos():
             return True
         else:
             raise FileFormatNotAllowedError("Formato de archivo no soportado")
+    
+    def __archivo_soportado(self,filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in self.EXTENSIONES_SOPORTADAS
 
     def __convertir_a_wav(self,filename):
         print('Convirtiendo ' + filename + ' a wav...')
@@ -77,21 +65,18 @@ class GestorArchivos():
         p = subprocess.call('echo {} | sudo -S {}'.format(pwd, cmd),preexec_fn=os.setsid, shell=True)
         print('Archivo  ' + nombre_wav + ' guardado con exito!')
 
-class ReproductorRadio(object):
-    process = None
-    songs = []
-    indice = None
-    reproduciendo = None
-    currentSong = ""
-    FREQUENCY = 87.5
-    thread = None
+class ReproductorRadio(object):    
 
     def __init__(self):
+        self.songs = None
+        self.indice = None
+        self.currentSong = None
+        self.actualizar_canciones()
+        self.frequency = 87.5
+        self.reproduciendo=0  
         self.fin_hilo = False
         signal.signal(signal.SIGINT, self.rutina_salir)
-        signal.signal(signal.SIGTERM, self.rutina_salir)
-        self.reproduciendo=0
-        self.actualizar_canciones()
+        signal.signal(signal.SIGTERM, self.rutina_salir)        
         # Thread que controla la reproduccion automatica de las canciones
         self.thread = threading.Thread(target=self.detectar_fin_cancion, args=(1,))
         self.thread.start()
@@ -180,7 +165,7 @@ class ReproductorRadio(object):
     def estado_emisora(self):
         estados = {
            "song" : self.currentSong,
-           "frequency" : self.FREQUENCY,
+           "frequency" : self.frequency,
            "status" : self.reproduciendo
         }
         return estados

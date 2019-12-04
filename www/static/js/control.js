@@ -28,7 +28,7 @@ $(document).ready(function(){
   function updateList(data) {
     var newList = $("#list").empty();
 
-    for(i=0;i<data.length;i++) {
+    for (i=0;i<data.length;i++) {
 
       var song = JSON.parse(data[i]);
 
@@ -55,16 +55,15 @@ $(document).ready(function(){
     }
   }
 
-  // Obtiene la lista de archivos que se han subido al navegador
-  // Por el momento solo toma el primer elemento de la lista
+  // Obtiene la lista de archivos que se han subido al formulario del navegador
   function getFiles() {
     var fileInput = $('#uploadsongs input[type=file]');
     var file;
-    if(fileInput[0].files.length != 0) {
+    if (fileInput[0].files.length != 0) {
       var formData = new FormData();
       for (i=0; i<fileInput[0].files.length; i++) {
         file = fileInput[0].files[i];
-        if(file!=undefined) {
+        if (file!=undefined) {
           formData.append('file'+i, file, file.name);
         }
       }
@@ -72,41 +71,44 @@ $(document).ready(function(){
     return formData;
   }
 
+  // Actualiza la parte visual del panel de estado de la emisora
+  function updateState(song, frequency, status) {
+    var songInfo = "Listening to: " + song;
+    var freqInfo = "FM Frequency: " + frequency + " MHz";
+    var statusInfo = "";
+    if (status === 1) {
+      $('#btnPlay').css('display', 'none');
+      $('#btnStop').css('display', 'block');
+      $('#btnNext').css('display', 'block');
+      $('#btnPrev').css('display', 'block');
+      statusInfo = "We are online!";
+    } else {
+      $('#btnPlay').css('display', 'block');
+      $('#btnStop').css('display', 'none');
+      $('#btnNext').css('display', 'none');
+      $('#btnPrev').css('display', 'none');
+      statusInfo = "We are offline...";
+    }
+    $("#songInfo").text(songInfo);
+    $("#frequencyInfo").text(freqInfo);
+    $("#statusInfo").text(statusInfo);
+  }
+
   // Definicion de peticiones AJAX
 
   // Realiza un requerimiento HTTP al servidor para obtener el estado de la emisora
   function getState() {
-    var color=0;
     $.ajax({
       url: '/update',
       type: "GET",
       success: function(data) {
-
-        var songInfo = "Listening to: " + data["song"];
-        var freqInfo = "FM Frequency: " + data["frequency"] + " MHz";
-        var status =  data["status"];
-        var powerBtnColor = "";
-        var statusInfo = "";
-        if (status === 1) {
-          $('#powerBtnStart').css('display', 'none');
-          $('#powerBtnStop').css('display', 'block');
-          $('#powerBtnNext').css('display', 'block');
-          $('#powerBtnPrev').css('display', 'block');
-          statusInfo = "We are online!";
-        } else {
-          $('#powerBtnStart').css('display', 'block');
-          $('#powerBtnStop').css('display', 'none');
-          $('#powerBtnNext').css('display', 'none');
-          $('#powerBtnPrev').css('display', 'none');
-          statusInfo = "We are offline...";
-        }
-
-        $("#songInfo").text(songInfo);
-        $("#frequencyInfo").text(freqInfo);
-        $("#statusInfo").text(statusInfo);
+        updateState(data["song"], data["frequency"], data["status"]);        
+      },
+      error: function(data) {
+        alert("No se pudo obtener el estado de la radio");
       }
     });
-  }
+  }  
 
   // Realiza un requerimiento HTTP al servidor para obtener la lista de archivos de audio de la emisora
   function getSongs() {
@@ -125,7 +127,7 @@ $(document).ready(function(){
   }
 
   // Realiza un requerimiento HTTP al servidor para transferir un archivo de audio a la emisora
-  function uploadSong(datos) {
+  function uploadSongs(datos) {
     $('#spinner').show();
     $('#uploadBtn').prop('disabled', true);
     $.ajax({
@@ -136,7 +138,7 @@ $(document).ready(function(){
       processData: false,
       success: function(data) {
         updateList(data.songs_list);
-        $('#file1').val(null); // limpia el input del archivo        
+        $('#fileInput').val(null); // limpia el input del archivo        
       },
       error: function(data) {
         alert("No se pudo subir el archivo");
@@ -156,9 +158,7 @@ $(document).ready(function(){
       contentType: "application/json",
       data: JSON.stringify(songs),
       success: function(data) {
-        if (data.songs_list != undefined) {
-          updateList(data.songs_list);
-        }
+        updateList(data.songs_list);
       },
       error: function(data) {
         alert("No se pudo borrar el archivo");
@@ -168,17 +168,16 @@ $(document).ready(function(){
 
   // Definicion de eventos para los botones de la pagina
 
-  $('#powerBtnStart').click(function() {
+  $('#btnPlay').click(function() {
       $.ajax({
         url: '/play',
-        type: "POST",
+        type: "GET",
         success: function(data) {
-          alert("Radio iniciada!")
-          $("#powerBtnStart").css("display", "none");
-          $("#powerBtnStop").css("display", "block");
-          $("#powerBtnNext").css("display", "block");
-          $("#powerBtnPrev").css("display", "block");
-          $("#statusInfo").text("We are online!");
+          $("#btnPlay").css("display", "none");
+          $("#btnStop").css("display", "block");
+          $("#btnNext").css("display", "block");
+          $("#btnPrev").css("display", "block");
+          $("#statusInfo").text("We are online");
         },
         error: function(data) {
           alert("No se pudo iniciar la radio");
@@ -186,17 +185,16 @@ $(document).ready(function(){
       });
   });
 
-  $('#powerBtnStop').click(function() {
+  $('#btnStop').click(function() {
       $.ajax({
         url: '/stop',
-        type: "POST",
-        success: function(data) {
-
-          $("#powerBtnStart").css("display", "block");
-          $("#powerBtnStop").css("display", "none");
-          $("#powerBtnNext").css("display", "none");
-          $("#powerBtnPrev").css("display", "none");
-          $("#statusInfo").text("We are offline ... !");
+        type: "GET",
+        success: function(data) {          
+          $("#btnPlay").css("display", "block");
+          $("#btnStop").css("display", "none");
+          $("#btnNext").css("display", "none");
+          $("#btnPrev").css("display", "none");
+          $("#statusInfo").text("We are offline...");
         },
         error: function(data) {
           alert("No se pudo cerrar la radio");
@@ -204,29 +202,17 @@ $(document).ready(function(){
       });
   });
 
-  $('#powerBtnNext').click(function() {
+  $('#btnNext').click(function() {
       $.ajax({
         url: '/next',
-        type: "POST",
-        success: function(data) {
-
-        },
-        error: function(data) {
-          alert("No se pudo cerrar la radio");
-        }
+        type: "GET"       
       });
   });
 
-  $('#powerBtnPrev').click(function() {
+  $('#btnPrev').click(function() {
       $.ajax({
         url: '/prev',
-        type: "POST",
-        success: function(data) {
-
-        },
-        error: function(data) {
-          alert("No se pudo cerrar la radio");
-        }
+        type: "GET"
       });
   });
 
@@ -241,7 +227,7 @@ $(document).ready(function(){
   });
 
   $('#selectAllBtn').click(function() {
-    $('input[type="checkbox"]').each(function(){
+    $('input[type="checkbox"]').each(function() {
       $(this).prop("checked", selectAll);
     });
 
@@ -254,20 +240,10 @@ $(document).ready(function(){
     selectAll = !selectAll;
   });
 
-  $('#stopBtn').click(function() {
-    $.ajax({
-      url: '/info',
-      success: function(data) {
-        $('#prueba').text($('#prueba').text() + data['dato']);
-      }
-    });
-  });
-
   $('#uploadBtn').click(function() {
     var datos = getFiles();
-    if (datos != undefined)
-    {
-      uploadSong(datos);
+    if (datos != undefined) {
+      uploadSongs(datos);
     } else {
       alert('No seleccionaste ningun archivo');
     }

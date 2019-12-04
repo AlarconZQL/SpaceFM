@@ -18,31 +18,31 @@ def index():
     return render_template('index.html')
 
 # Ruta para reproducir una cancion
-@app.route("/play", methods = ["POST"])
+@app.route("/play", methods = ["GET"])
 def play():
     reproductor_radio.reproducir_cancion()
     return "200"
 
 # Ruta para detener la cancion actual
-@app.route("/stop", methods = ["POST"])
+@app.route("/stop", methods = ["GET"])
 def stop():
     reproductor_radio.detener_cancion()
     return "200"
 
 # Ruta para pasar al siguiente tema en la emisora
-@app.route("/next", methods = ["POST"])
+@app.route("/next", methods = ["GET"])
 def next():
     reproductor_radio.siguiente_cancion()
     return "200"
 
 # Ruta para pasar al anterior tema en la emisora
-@app.route("/prev", methods = ["POST"])
+@app.route("/prev", methods = ["GET"])
 def prev():
     reproductor_radio.anterior_cancion()
     return "200"
 
 # Ruta para consultar el estado de la emisora
-@app.route("/update")
+@app.route("/update", methods=['GET'])
 def update():
     return jsonify(reproductor_radio.estado_emisora())
 
@@ -75,12 +75,13 @@ def upload():
             if archivo.filename == '':
                 msj_error = msj_error + "Nombre de archivo vacio" + archivo.filename + "\n"
             gestor_archivos.guardar_cancion(archivo)
-            #return jsonify(songs_list = gestor_archivos.listar_canciones_json())
         except FileFormatNotAllowedError as e:
             msj_error = msj_error + 'Formato de archivo ' + archivo.filename +' no soportado\n'
         except Exception as e:
             msj_error = msj_error + 'Archivo ' + requerimiento + ' no pudo ser guardado \n'
     reproductor_radio.actualizar_canciones()
+    if msj_error != "":
+        print(msj_error)
     return jsonify(songs_list = gestor_archivos.listar_canciones_json())
 
 # Ruta para obtener todos los archivos de audio almacenadas en la emisora
